@@ -176,7 +176,7 @@ with the corresponding template:
 </template>
 ```
 
-## Default Methods on UniCollection.UniDoc
+## Default methods on UniCollection.UniDoc
 (They are default on each universe document)
 
 - `extend()`
@@ -277,7 +277,7 @@ Setting new permission for user you can set only on server side, by method on un
 
 `user.setPermission(name, value)`
 
-## Documents Methods on user object
+## Documents methods on user object
 
 -    `getName()` returns profile.name of user
 
