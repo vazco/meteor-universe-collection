@@ -1,5 +1,5 @@
 # Universe Collection
-( replacement of Mongo.Collection )
+##### ( replacement of Mongo.Collection ) #####
 Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
 
@@ -223,7 +223,7 @@ with the corresponding template:
     returns collection to which current document belongs.
 
 # UniUsers
-( replacement of Meteor.users )
+##### ( replacement of Meteor.users ) #####
 
 Universe provides UniUsers object which is a copy of Meteor.users collection object that shares the same document with.
 Meteor.users collection stay unmodiefied. Both operates on the same documents, only methods to access objects have changed.
