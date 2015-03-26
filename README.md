@@ -271,7 +271,8 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 
 -  `UniUsers.availablePermissions()`
 
-    Returns an object of key/value pairs, like:  {permissionName: "Permission Description", ....}
+    Returns: on client an object of key/value pairs, like:  {permissionName: templateNameOfField, ....}
+    on server side: {permissionName: true, ....},
 
 Setting new permission for user you can set only on server side, by method on universe user
 
