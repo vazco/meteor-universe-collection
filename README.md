@@ -6,6 +6,12 @@ or by preparing own class inherited from UniCollection.UniDoc.
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
 Another good thing is that, UniCollection works with packages like aldeed:simple-schema and matb33:collection-hooks
 
+## Installation
+
+```sh
+$ meteor add vazco:universe-collection
+```
+
 ### How to use
 
 #### Creating collection
