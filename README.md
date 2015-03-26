@@ -293,7 +293,7 @@ Setting new permission for user you can set only on server side, by method on un
 -    `isLoggedIn()` checks if this user is logged in (works on client and publication)
 
 -    `isAdmin()` checks if user has flag is_admin === true
-     (You can override this method in `UniUsers.UniUse` and checks something else)
+     (You can override this method in `UniUsers.UniUser` and checks something else)
 
 -    `setPermission(name, value)` sets permission on current user (is available on server)
 
