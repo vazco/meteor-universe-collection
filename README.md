@@ -292,5 +292,5 @@ Setting new permission for user you can set only on server side, by method on un
 
 ## Additional extensions for this package:
 
-[Universe Access & Mappings](https://atmospherejs.com/vazco/universe-access)
-[Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
+- [Universe Access & Mappings](https://atmospherejs.com/vazco/universe-access)
+- [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
