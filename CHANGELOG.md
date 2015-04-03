@@ -1,4 +1,9 @@
 
+====1.0.5====
+-------------
+- bugs fixes
+- readme
+
 ====1.0.0====
 -------------
 - Moved Universe Collection from universe-core to this package
