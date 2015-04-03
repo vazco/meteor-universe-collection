@@ -1,7 +1,7 @@
 Package.describe({
     summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
     name: 'vazco:universe-collection',
-    version: '1.0.6',
+    version: '1.0.7',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -11,7 +11,7 @@ Package.on_use(function (api) {
         'underscore',
         'accounts-base',
         'mongo',
-        'vazco:universe-utilities@1.0.4'
+        'vazco:universe-utilities@1.0.5'
     ], ['client', 'server']);
 
     api.use(['matb33:collection-hooks@0.7.11'], ['client', 'server'], {weak: true});
