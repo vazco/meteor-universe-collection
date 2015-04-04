@@ -8,6 +8,7 @@ Package.describe({
 Package.on_use(function (api) {
     api.versionsFrom(['METEOR@1.0.4']);
     api.use([
+        'ejson',
         'underscore',
         'accounts-base',
         'mongo',
@@ -19,8 +20,9 @@ Package.on_use(function (api) {
 
     api.add_files([
         'lib/UniCollection.js',
-        'lib/UniDoc.js',
+        'lib/docPrototypes/UniDoc.js',
         'lib/UniUsers.js',
+        'lib/docPrototypes/UniUser.js',
         'lib/BasicSchema.js',
         'lib/UniSecure.js'
     ]);
