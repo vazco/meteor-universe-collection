@@ -1,4 +1,9 @@
 
+====1.1.0====
+-------------
+- Added auto registering of universe documents as the EJSON type
+- Added ensureUniDoc on every universe collections
+
 ====1.0.7====
 -------------
 - UniUsers.ensureUniUser

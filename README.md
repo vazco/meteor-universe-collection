@@ -111,6 +111,42 @@ use this:
     Colls.Books.setDefaultSort({ title: 1 })
 ```
 
+- `ensureUniDoc(docOrId, pattern=this.matchingDocument(), errorMessage=)`
+
+    Ensures that returned document is matched against pattern.
+
+    It accepts document but also id of existing document.
+
+    If the match fails, ensureUniDoc throws a Match.Error
+
+    but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
+
+```
+
+    var book = Colls.Books.ensureUniDoc(book);
+
+    var book =  Colls.Books.ensureUniDoc(bookId);
+```
+
+    As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
+
+    but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
+
+    And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+
+
+- `matchingDocument(keysPatterns=)`
+
+    Pattern argument to checking functions like: this.ensureUniDoc(), check() and Match.test()
+
+    Basic pattern checks document type if type is equal to current constructor of documents in this collection.
+
+    Additionally you can precise patterns for fields of document, using keysPatterns
+
+```
+    var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
+```
+
 ## Documents Methods
 You can add new methods for transforming documents in two ways
 
@@ -182,8 +218,18 @@ with the corresponding template:
 </template>
 ```
 
+### EJSONable document types
+
+Every constructor of documents, is registering as new EJSON type. It is made under name `collectionName+"Doc"`
+
+Because of that Meteor is able to use types of universe document in:
+
+fully allowing your type in the return values or arguments to methods.
+storing your type client-side in Minimongo.
+allowing your type in Session variables, ReactiveDict and other places.
+
 ## Default methods on UniCollection.UniDoc
-(They are default on each universe document)
+####(They are default on each universe document)####
 
 - `extend()`
 
@@ -256,6 +302,13 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 
     It is depended on user method `user.isAdmin()`
 
+-   `UniUsers.ensureUniUser(user, patternForMatch, errorMessage)`
+
+   Same as Colls.Books.ensureUniDoc but as a default it takes the logged in user,
+
+   but only if first parameter is undefined.
+
+   So, something like that can prevent: `UniUsers.ensureUniUser(user||null)`
 
 - `UniUsers.hasDocument(docOrId)`
 
