@@ -314,7 +314,7 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 
    Checks if document belongs to UniUsers collection
 
-   (on client side you must have this doc in minimongo![subscription needed])
+   (on client side you must have this doc in minimongo [subscription needed])
 
 
 - `UniUsers.setNewPermissionType(permissionName, description`
