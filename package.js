@@ -9,6 +9,7 @@ Package.on_use(function (api) {
     api.versionsFrom(['METEOR@1.0.4']);
     api.use([
         'ejson',
+        'check',
         'underscore',
         'accounts-base',
         'mongo',
