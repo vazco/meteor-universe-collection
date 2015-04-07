@@ -1,4 +1,8 @@
 
+====1.1.2====
+-------------
+- bugfix
+
 ====1.1.0====
 -------------
 - Added auto registering of universe documents as the EJSON type
