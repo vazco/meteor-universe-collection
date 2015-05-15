@@ -147,6 +147,20 @@ use this:
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
 
+- `observeCount(selector, callbacks)`
+    Observe count for query. Establishes a live query that invokes callbacks when the count of results was changed.
+
+    Available callbacks:
+
+--         `changed` - called each time count was changed (after initialized),
+--         `incremented` - called each time count increased (after initialized),
+--         `decremented` - called each time count decreased (after initialized),
+--         `initialized` - will be called once on initialized observe.
+
+       Ex.: {decremented: function(currentCount){ console.log('currentCount', currentCount);}}
+       Returns a live query handle, which is an object with a stop method.
+       Call stop with no arguments to stop calling the callback functions and tear down the query.
+
 ## Documents Methods
 You can add new methods for transforming documents in two ways
 

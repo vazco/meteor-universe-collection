@@ -1,4 +1,8 @@
 
+====1.2.0====
+-------------
+- added observeCount on universe collection (server only)
+
 ====1.1.7====
 -------------
 - added getCollectionName
