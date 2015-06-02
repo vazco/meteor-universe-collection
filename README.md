@@ -3,13 +3,20 @@
 Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
 
+All documents know to what collection, belong.
+In simple way you can get collection from dockument and even make update like this: 
+```
+doc.update({$set: {title: 'new title'}})
+```
+
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
-Another good thing is that, UniCollection works with packages like aldeed:simple-schema and matb33:collection-hooks
+Another good thing is that, UniCollection works with packages like aldeed:simple-schema and matb33:collection-hooks.
+
 
 ## Installation
 
 ```sh
-$ meteor add vazco:universe-collection
+    $ meteor add vazco:universe-collection
 ```
 
 ### How to use
@@ -19,17 +26,17 @@ Instead of using standard:
 
 ```
 Colls.Books = new Mongo.Collection('Books');
-
 ```
 
 use this:
 
 ```
-#!javascript
-
  Colls.Books = new UniCollection('Books');
 ```
 
+Universe collection (as opposed to Meteor Collection) always must have name.
+If you want create a local collection please pass in options property: `connection: null`, instead null as a first parameter
+ 
 ### Methods on collection object
 - `setConstructor(transformationObject)`
 
@@ -52,11 +59,9 @@ use this:
        All of this methods will be added to returned document by function find, findOne
 
 
-
 - `hasDocument(docOrId)`
 
     Checks if document belongs to this collection
-
 
 
 - `addErrorSupportToUpdates(onErrorFn)`
@@ -72,7 +77,6 @@ use this:
       (You can override this logic by replacing UniCollection._showError)
 
 
-
 - `addErrorSupportToInserts(onErrorFn)`
 
       Adds error support for all inserts on client side
@@ -80,11 +84,9 @@ use this:
       It works like addErrorSupportToUpdates
 
 
-
 - `addErrorSupportToRemoves(onErrorFn)`
 
        Adds error support for all removes on client side
-
 
 
 - `addErrorSupportToUpserts(onErrorFn)`
@@ -92,13 +94,11 @@ use this:
        It works like addErrorSupportToUpdates
 
 
-
 - `addErrorSupportToAllWriteMethods(onErrorFn)`
 
     Adds error callback to each one write methods
 
     param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
-
 
 
 - `setDefaultSort(options)`
@@ -122,7 +122,6 @@ use this:
     but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
 
 ```
-
     var book = Colls.Books.ensureUniDoc(book);
 
     var book =  Colls.Books.ensureUniDoc(bookId);
@@ -168,7 +167,6 @@ You can add new methods for transforming documents in two ways
 You can use Collection.helpers method to register new methods to objects.
 
 ```
-#!javascript
     Colls.Books = new UniCollection('Books');
 
     //Adding methods to documents
@@ -192,7 +190,6 @@ book.read();
 Inheritance takes place by  calling extend() method on other UniDoc object
 
 ```
-#!javascript
     //Gets your new independent prototype
     var YourDocProto = UniCollection.UniDoc.extend();
 
@@ -212,7 +209,7 @@ Inheritance takes place by  calling extend() method on other UniDoc object
 Methods on document you can use instead template helpers:
 This can help you of avoiding unnecessary template helpers
 
-```javascript
+```
 Template.books.helpers({
     books: function() {
     return Colls.Books.find();
@@ -222,7 +219,7 @@ Template.books.helpers({
 
 with the corresponding template:
 
-```html
+```
 <template name="books">
     <ul>
         {{#each books}}
@@ -272,17 +269,14 @@ allowing your type in Session variables, ReactiveDict and other places.
     Saves selected keys in current document
 
 
-
 - `refresh()`
 
     refind doc and refresh fields in current document
 
 
-
 - `findSelf()`
 
     returns fresh instance of current document
-
 
 
 - `getCollection()`
