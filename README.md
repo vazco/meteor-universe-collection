@@ -4,10 +4,13 @@ Collections on steroids, you can defined own documents helpers by adding its usi
 or by preparing own class inherited from UniCollection.UniDoc.
 
 All documents know to what collection, belong.
-In simple way you can get collection from dockument and even make update like this: 
+In simple way you can get collection from document and even make update like this: 
+
 ```
 doc.update({$set: {title: 'new title'}})
 ```
+
+And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
 
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
 Another good thing is that, UniCollection works with packages like aldeed:simple-schema and matb33:collection-hooks.

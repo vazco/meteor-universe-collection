@@ -1,4 +1,10 @@
 
+====1.2.7====
+-------------
+- changed linking docConstructor by extending (for default) 
+and second parameter 'direct' for method setConstructor of UniCollection.
+UniUsers.UniUser is still added directly (by reference)
+
 ====1.2.0====
 -------------
 - added observeCount on universe collection (server only)
