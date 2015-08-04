@@ -1,3 +1,4 @@
+<img src="http://uniproject.vazco.eu/black_logo.png" />
 # Universe Collection
 ##### ( replacement of Mongo.Collection ) #####
 Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
