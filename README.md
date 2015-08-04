@@ -346,7 +346,7 @@ storing your type client-side in Minimongo.
 allowing your type in Session variables, ReactiveDict and other places.
 
 ## Default methods on UniCollection.UniDoc
-####(They are default on each universe document)####
+#### (They are default on each universe document) ####
 
 - `extend()`
 
