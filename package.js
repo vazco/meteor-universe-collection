@@ -5,13 +5,12 @@ Package.describe({
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
-Package.on_use(function (api) {
+Package.onUse(function (api) {
     api.versionsFrom(['METEOR@1.0.4']);
     api.use([
         'ejson',
         'check',
         'underscore',
-        'accounts-base',
         'mongo',
         'vazco:universe-utilities@1.1.5'
     ], ['client', 'server']);
@@ -19,8 +18,10 @@ Package.on_use(function (api) {
     api.use(['matb33:collection-hooks@0.7.13'], ['client', 'server'], {weak: true});
 
 
-    api.add_files([
+    api.addFiles([
         'lib/UniCollection.js',
+        'lib/UniCollectionValidators.js',
+        'lib/UniMethods.js',
         'lib/docPrototypes/UniDoc.js',
         'lib/UniUsers.js',
         'lib/docPrototypes/UniUser.js',
