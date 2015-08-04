@@ -1,4 +1,10 @@
 
+====1.5.0====
+-------------
+- added remote methods for collection and document 
+- changed method name setConstructor on setDocumentPrototype
+- added Api for adding custom allow/deny types
+
 ====1.2.7====
 -------------
 - changed linking docConstructor by extending (for default) 

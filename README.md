@@ -468,3 +468,11 @@ Setting new permission for user you can set only on server side, by method on un
 
 - [Universe Access & Mappings](https://atmospherejs.com/vazco/universe-access)
 - [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
+
+
+Copyright and license
+Code and documentation © 2015 Vazco.eu
+Released under the MIT license.
+
+This package is part of Universe, a package ecosystem based on Meteor platform maintained by Vazco.
+It works as standalone Meteor package, but you can get much more features when using the whole system.
