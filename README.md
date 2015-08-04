@@ -97,9 +97,8 @@ If you want create a local collection please pass in options property: `connecti
     
     From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
     
-    Additionally, handler from Meteor.methods,
-     will be have in context a collection object under this.collection.
-     Rest things like userId, connection are same. 
+    Additionally, handler will be have in context a collection object under this.collection.
+     Rest things like userId, connection are same as handlers in Meteor.methods have. 
     
     Remote methods on collection are inspired by insert/update function 
     and all of them have callbacks for allow/deny methods. 
