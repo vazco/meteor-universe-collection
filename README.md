@@ -41,26 +41,127 @@ Universe collection (as opposed to Meteor Collection) always must have name.
 If you want create a local collection please pass in options property: `connection: null`, instead null as a first parameter
  
 ### Methods on collection object
-- `setConstructor(transformationObject)`
+- `setDocumentPrototype(transformationObject)` 
 
     Sets transformation function for collection.
-
+    
     Function passed as an argument will be executed for each document
 
     to transform selected documents before the method (like: find, findOne) returns them.
 
-    UniDoc is a default of document constructor.
+    UniDoc is a default of document prototype.
+    (You can also pass it in collection constructor in options as a key 'documentPrototype')
 
 
+```
+    var collection = new UniCollection('some');
+    
+    // getting new prototype of UniDoc
+    var myDocProto = UniDoc.extend();
+    
+    //Adding new method to prototype of myDoc.
+    myDocProto.prototype.getTitleUppercase = function(){ return this.title.toLocaleUpperCase(); }
+    
+    //setting new prototype to collection
+    collection.setDocumentPrototype(myDocProto); 
+    
+    var docInstance = collection.findOne();
+    console.log(docInstance.getTitleUppercase());
+```
 
 - `helpers(objectWithMethods)`
 
        Using this method you can add new helpers function into document prototype.
 
-       It's alternative way to setConstructor.
+       It's alternative way to setDocumentPrototype.
 
-       All of this methods will be added to returned document by function find, findOne
+       All of this methods will be added to returned document by function find, findOne.
 
+       Documents helpers did not depend from transformationObject.
+
+```
+    var collection = new UniCollection('some');
+    collection.helpers({
+          getTitleUppercase: function(){
+                return this.title.toLocaleUpperCase();
+          }
+    });
+    
+    var docInstance = collection.findOne();
+    console.log(docInstance.getTitleUppercase());
+```
+
+- `methods`
+    Remote methods on collection that can be invoked over the network by clients from collection instance.
+    
+    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
+    
+    Additionally, handler from Meteor.methods,
+     will be have in context a collection object under this.collection.
+     Rest things like userId, connection are same. 
+    
+    Remote methods on collection are inspired by insert/update function 
+    and all of them have callbacks for allow/deny methods. 
+    Which are called on invocation, but only first method in single invocation stack is validated.
+    It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
+    
+```
+    var collection = new UniCollection('some');
+    collection.methods({
+        noneDirectly: function(){
+            console.log('called by other');
+        },
+        getX: function(a, b, c){
+            console.log(a, b, c);
+        },
+        getY: function(){
+            if(Meteor.isServer){
+               return this.collection.call('noneDirectly');
+            }
+        }
+    });
+    //also you can provide callbacks for deny function
+    collection.allow({
+        //value of document variable will be null for remote collection methods    
+        getX: function(userId, document, args, invocation){
+            return true;
+        },
+        //only for remote methods from document will be have object of doc in this argument
+        getY: function(userId, document, args, invocation){
+                return true;
+        }
+    });
+    //call with params
+    collection.call('getX', 1, 2, 3);
+    //Invoke a method passing an array of arguments.
+    collection.apply('getX', [1, 2, 3]);
+    //calling with callback
+    collection.call('getY', function(error, result){ console.log(error, result); });
+```    
+
+- `docMethods`    
+    Remote methods on document that can be invoked over the network by clients from document instance.
+    
+    Works in the same way as collection.methods but additionally handler will be have a document object in context
+     (this.document)
+     
+```
+    var collection = new UniCollection('some');
+    collection.docMethods({
+        addItem: function(item){
+            return this.document.update({$set: {item: item}});            
+        }
+    });
+    //also you can provide callbacks for deny function
+    collection.allow({  
+        addItem: function(userId, document, args, invocation){
+            return true;
+        }
+    });
+    
+    var doc = collection.findOne();
+    doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
+```   
 
 - `hasDocument(docOrId)`
 
@@ -78,31 +179,6 @@ If you want create a local collection please pass in options property: `connecti
       for 'header' place will be called or alert if UniUI.setErrorMessage is missing
 
       (You can override this logic by replacing UniCollection._showError)
-
-
-- `addErrorSupportToInserts(onErrorFn)`
-
-      Adds error support for all inserts on client side
-
-      It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToRemoves(onErrorFn)`
-
-       Adds error support for all removes on client side
-
-
-- `addErrorSupportToUpserts(onErrorFn)`
-
-       It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToAllWriteMethods(onErrorFn)`
-
-    Adds error callback to each one write methods
-
-    param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
-
 
 - `setDefaultSort(options)`
 
@@ -148,6 +224,32 @@ If you want create a local collection please pass in options property: `connecti
 ```
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
+
+
+- `addErrorSupportToInserts(onErrorFn)`
+
+      Adds error support for all inserts on client side
+
+      It works like addErrorSupportToUpdates
+
+
+- `addErrorSupportToRemoves(onErrorFn)`
+
+       Adds error support for all removes on client side
+
+
+- `addErrorSupportToUpserts(onErrorFn)`
+
+       It works like addErrorSupportToUpdates
+
+
+- `addErrorSupportToAllWriteMethods(onErrorFn)`
+
+    Adds error callback to each one write methods
+
+    param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
+
+
 
 - `observeCount(selector, callbacks)`
     Observe count for query. Establishes a live query that invokes callbacks when the count of results was changed.
