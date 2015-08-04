@@ -7,8 +7,9 @@ or by preparing own class inherited from UniCollection.UniDoc.
 All documents know to what collection, belong.
 In simple way you can get collection from document and even make update like this: 
 
-```
-doc.update({$set: {title: 'new title'}})
+```js
+doc.update({$set: {title: 'new title'}});
+doc.call('addItem', item);
 ```
 
 And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
@@ -28,13 +29,13 @@ Another good thing is that, UniCollection works with packages like aldeed:simple
 #### Creating collection
 Instead of using standard:
 
-```
+```js
 Colls.Books = new Mongo.Collection('Books');
 ```
 
 use this:
 
-```
+```js
  Colls.Books = new UniCollection('Books');
 ```
 
@@ -54,7 +55,7 @@ If you want create a local collection please pass in options property: `connecti
     (You can also pass it in collection constructor in options as a key 'documentPrototype')
 
 
-```
+```js
     var collection = new UniCollection('some');
     
     // getting new prototype of UniDoc
@@ -80,7 +81,7 @@ If you want create a local collection please pass in options property: `connecti
 
        Documents helpers did not depend from transformationObject.
 
-```
+```js
     var collection = new UniCollection('some');
     collection.helpers({
           getTitleUppercase: function(){
@@ -105,7 +106,7 @@ If you want create a local collection please pass in options property: `connecti
     Which are called on invocation, but only first method in single invocation stack is validated.
     It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
     
-```
+```js
     var collection = new UniCollection('some');
     collection.methods({
         noneDirectly: function(){
@@ -145,7 +146,7 @@ If you want create a local collection please pass in options property: `connecti
     Works in the same way as collection.methods but additionally handler will be have a document object in context
      (this.document)
      
-```
+```js
     var collection = new UniCollection('some');
     collection.docMethods({
         addItem: function(item){
@@ -186,7 +187,7 @@ If you want create a local collection please pass in options property: `connecti
 
     but default sort option are used only when someone call find without sort options
 
-```
+```js
     Colls.Books.setDefaultSort({ title: 1 })
 ```
 
@@ -200,9 +201,8 @@ If you want create a local collection please pass in options property: `connecti
 
     but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
 
-```
+```js
     var book = Colls.Books.ensureUniDoc(book);
-
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
 
@@ -221,7 +221,7 @@ If you want create a local collection please pass in options property: `connecti
 
     Additionally you can precise patterns for fields of document, using keysPatterns
 
-```
+```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
 
@@ -271,7 +271,7 @@ You can add new methods for transforming documents in two ways
 ### Simple way:
 You can use Collection.helpers method to register new methods to objects.
 
-```
+```js
     Colls.Books = new UniCollection('Books');
 
     //Adding methods to documents
@@ -285,7 +285,7 @@ You can use Collection.helpers method to register new methods to objects.
 
 And after that you can use it:
 
-```
+```js
 var book = Colls.Books.findOne();
 //All documents will be have before defined functions
 book.read();
@@ -294,7 +294,7 @@ book.read();
 ### By Inheritance:
 Inheritance takes place by  calling extend() method on other UniDoc object
 
-```
+```js
     //Gets your new independent prototype
     var YourDocProto = UniCollection.UniDoc.extend();
 
@@ -314,7 +314,7 @@ Inheritance takes place by  calling extend() method on other UniDoc object
 Methods on document you can use instead template helpers:
 This can help you of avoiding unnecessary template helpers
 
-```
+```js
 Template.books.helpers({
     books: function() {
     return Colls.Books.find();
@@ -324,7 +324,7 @@ Template.books.helpers({
 
 with the corresponding template:
 
-```
+```html
 <template name="books">
     <ul>
         {{#each books}}
