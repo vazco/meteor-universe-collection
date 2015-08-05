@@ -11,6 +11,7 @@ Package.onUse(function (api) {
         'ejson',
         'check',
         'underscore',
+        'accounts-base',
         'mongo',
         'vazco:universe-utilities@1.1.5'
     ], ['client', 'server']);
