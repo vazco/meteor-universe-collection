@@ -144,8 +144,7 @@ If you want create a local collection please pass in options property: `connecti
 ```js
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
-``` 
-
+```
     As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
     but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
@@ -164,7 +163,6 @@ If you want create a local collection please pass in options property: `connecti
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
-
 
 - `addErrorSupportToInserts(onErrorFn)`
 
@@ -326,12 +324,10 @@ The `denyInsert` option works the same way, but for inserts. If you set
 `denyInsert` to true, you will need to set `optional: true` as well. 
 
 ## Remote methods
-
     UniCollection provides remote methods on collections and documents. 
     This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
     
-### Remote methods on collection  
-  
+### Remote methods on collection
     This kind of methods can be invoked over the network by clients from collection instance.
     
     From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
@@ -376,7 +372,7 @@ The `denyInsert` option works the same way, but for inserts. If you set
     collection.apply('getX', [1, 2, 3]);
     //calling with callback
     collection.call('getY', function(error, result){ console.log(error, result); });    
-```    
+```
 
 ### Remote methods on document    
     You can define methods that will be available to invoke over the network from document instance.
@@ -400,7 +396,7 @@ The `denyInsert` option works the same way, but for inserts. If you set
     
     var doc = collection.findOne();
     doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
-```   
+```
 
 ## Documents Methods
 You can add new methods for transforming documents in two ways
