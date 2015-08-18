@@ -95,75 +95,14 @@ If you want create a local collection please pass in options property: `connecti
 ```
 
 - `methods`
-    Remote methods on collection that can be invoked over the network by clients from collection instance.
-    
-    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
-    
+    Remote methods on collection that can be invoked over the network by clients from collection instance.    
+    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).    
     Additionally, handler will be have in context a collection object under this.collection.
      Rest things like userId, connection are same as handlers in Meteor.methods have. 
-    
-    Remote methods on collection are inspired by insert/update function 
-    and all of them have callbacks for allow/deny methods. 
-    Which are called on invocation, but only first method in single invocation stack is validated.
-    It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
-    
-```js
-    var collection = new UniCollection('some');
-    collection.methods({
-        noneDirectly: function(){
-            console.log('called by other');
-        },
-        getX: function(a, b, c){
-            console.log(a, b, c);
-        },
-        getY: function(){
-            if(Meteor.isServer){
-               return this.collection.call('noneDirectly');
-            }
-        }
-    });
-    //also you can provide callbacks for deny function
-    collection.allow({
-        //value of document variable will be null for remote collection methods    
-        getX: function(userId, document, args, invocation){
-            return true;
-        },
-        //only for remote methods from document will be have object of doc in this argument
-        getY: function(userId, document, args, invocation){
-                return true;
-        }
-    });
-    //call with params
-    collection.call('getX', 1, 2, 3);
-    //Invoke a method passing an array of arguments.
-    collection.apply('getX', [1, 2, 3]);
-    //calling with callback
-    collection.call('getY', function(error, result){ console.log(error, result); });
-```    
 
 - `docMethods`    
     Remote methods on document that can be invoked over the network by clients from document instance.
     
-    Works in the same way as collection.methods but additionally handler will be have a document object in context
-     (this.document)
-     
-```js
-    var collection = new UniCollection('some');
-    collection.docMethods({
-        addItem: function(item){
-            return this.document.update({$set: {item: item}});            
-        }
-    });
-    //also you can provide callbacks for deny function
-    collection.allow({  
-        addItem: function(userId, document, args, invocation){
-            return true;
-        }
-    });
-    
-    var doc = collection.findOne();
-    doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
-```   
 
 - `hasDocument(docOrId)`
 
@@ -205,7 +144,7 @@ If you want create a local collection please pass in options property: `connecti
 ```js
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
-```
+``` 
 
     As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
@@ -385,6 +324,83 @@ collection.setSchema(PostSchema);
 
 The `denyInsert` option works the same way, but for inserts. If you set
 `denyInsert` to true, you will need to set `optional: true` as well. 
+
+## Remote methods
+
+    UniCollection provides remote methods on collections and documents. 
+    This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
+    
+### Remote methods on collection  
+  
+    This kind of methods can be invoked over the network by clients from collection instance.
+    
+    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
+    
+    Additionally, handler will be have in context a collection object under this.collection.
+     Rest things like userId, connection are same as handlers in Meteor.methods have. 
+    
+    Remote methods on collection are inspired by insert/update function 
+    and all of them have callbacks for allow/deny methods. 
+    Which are called on invocation, but only first method in single invocation stack is validated.
+    It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
+    
+```js
+    var collection = new UniCollection('some');
+    collection.methods({
+        noneDirectly: function(){
+            console.log('called by other');
+        },
+        getX: function(a, b, c){
+            console.log(a, b, c);
+        },
+        getY: function(){
+            if(Meteor.isServer){
+               return this.collection.call('noneDirectly');
+            }
+        }
+    });
+    //also you can provide callbacks for deny function
+    collection.allow({
+        //value of document variable will be null for remote collection methods    
+        getX: function(userId, document, args, invocation){
+            return true;
+        },
+        //only for remote methods from document will be have object of doc in this argument
+        getY: function(userId, document, args, invocation){
+                return true;
+        }
+    });
+    //call with params
+    collection.call('getX', 1, 2, 3);
+    //Invoke a method passing an array of arguments.
+    collection.apply('getX', [1, 2, 3]);
+    //calling with callback
+    collection.call('getY', function(error, result){ console.log(error, result); });    
+```    
+
+### Remote methods on document    
+    You can define methods that will be available to invoke over the network from document instance.
+    
+    Works in the same way as collection.methods but additionally handler will be have a document object in context
+     (this.document)
+     
+```js
+    var collection = new UniCollection('some');
+    collection.docMethods({
+        addItem: function(item){
+            return this.document.update({$set: {item: item}});            
+        }
+    });
+    //also you can provide callbacks for deny function
+    collection.allow({  
+        addItem: function(userId, document, args, invocation){
+            return true;
+        }
+    });
+    
+    var doc = collection.findOne();
+    doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
+```   
 
 ## Documents Methods
 You can add new methods for transforming documents in two ways
