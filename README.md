@@ -294,7 +294,7 @@ collection.insert({title: "Ulysses", author: "James Joyce"}, function(error, res
   //The insert will fail, error will be set,
   //and result will be undefined or false because "copies" is required.
   //
-  //The list of errors is available on `error.invalidKeys` or by calling Books.simpleSchema().namedContext().invalidKeys()
+  //The list of errors is available on `error.invalidKeys` or by calling collection.getSchema().namedContext().invalidKeys()
 });
 ```
 
@@ -305,7 +305,7 @@ collection.update(book._id, {$unset: {copies: 1}}, function(error, result) {
   //The update will fail, error will be set,
   //and result will be undefined or false because "copies" is required.
   //
-  //The list of errors is available on `error.invalidKeys` or by calling Books.simpleSchema().namedContext().invalidKeys()
+  //The list of errors is available on `error.invalidKeys` or by calling collection.getSchema().namedContext().invalidKeys()
 });
 ```
 
