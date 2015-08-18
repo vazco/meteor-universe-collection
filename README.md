@@ -407,7 +407,7 @@ You can use Collection.helpers method to register new methods to objects.
     Colls.Books.helpers({
         read: function(){
             this.isReaded = true;
-            this.save('isReaded');
+            this.save();
         }
     });
 ```
@@ -498,9 +498,10 @@ allowing your type in Session variables, ReactiveDict and other places.
 
 
 
-- `save(fieldsList)`
+- `save(options, cb)`
 
-    Saves selected keys in current document
+    Saves all or chosen keys in current document.
+    options.fieldsList, options.useSchema or pass fieldsList instead options
 
 
 - `refresh()`
