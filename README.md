@@ -222,6 +222,10 @@ collection.setSchema('default', new SimpleSchema({
         label: "Author"
     }
 }));
+//getting default schema
+collection.getSchema()
+//or 
+collection.getSchema('default')
 ```
 
 Now that our collection has a schema, we can do a validated insert on either the client or the server:
@@ -263,6 +267,8 @@ collection.setSchema('expanded_schema', new SimpleSchema({
         type: String,
     }
 }));
+//getting additional schema
+collection.getSchema('expanded_schema')
 ```
 
 Our collection has a secondary schema, we can do a validated insert by that schema:
