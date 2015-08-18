@@ -1,3 +1,7 @@
+====1.7.3====
+-------------
+- added integration with simple schema with possibility of set the multi schemas
+- save method on doc can save whole doc ( values must are added by set method on doc)
 
 ====1.5.0====
 -------------

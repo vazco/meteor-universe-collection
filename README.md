@@ -15,7 +15,8 @@ doc.call('addItem', item);
 And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
 
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
-Another good thing is that, UniCollection works with packages like aldeed:simple-schema and matb33:collection-hooks.
+SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
+Another good thing is that, UniCollection works with package matb33:collection-hooks.
 
 
 ## Installation
@@ -249,21 +250,141 @@ If you want create a local collection please pass in options property: `connecti
 
     param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
 
+## Schemas
 
+UniCollection allows you to attach **one or more schemas** to collection.
+Every insert and update from client or server code will be automatically validates against schema.
+You can choose for inserting and updating a different schema than default by options.
 
-- `observeCount(selector, callbacks)`
-    Observe count for query. Establishes a live query that invokes callbacks when the count of results was changed.
+This package requires and automatically installs the aldeed:simple-schema package,
+which defines the schema syntax and provides the validation logic.
 
-    Available callbacks:
+### Default schema for a Collection
 
---         `changed` - called each time count was changed (after initialized),
---         `incremented` - called each time count increased (after initialized),
---         `decremented` - called each time count decreased (after initialized),
---         `initialized` - will be called once on initialized observe.
+```js
+collection.setSchema(new SimpleSchema({
+    title: {
+        type: String,
+        label: "Title",
+        max: 200
+    },
+    author: {
+        type: String,
+        label: "Author"
+    }
+}));
 
-       Ex.: {decremented: function(currentCount){ console.log('currentCount', currentCount);}}
-       Returns a live query handle, which is an object with a stop method.
-       Call stop with no arguments to stop calling the callback functions and tear down the query.
+// or
+
+collection.setSchema('default', new SimpleSchema({
+    title: {
+        type: String
+    },
+    author: {
+        type: String,
+        label: "Author"
+    }
+}));
+```
+
+Now that our collection has a schema, we can do a validated insert on either the client or the server:
+
+```js
+collection.insert({title: "Ulysses", author: "James Joyce"}, function(error, result) {
+  //The insert will fail, error will be set,
+  //and result will be undefined or false because "copies" is required.
+  //
+  //The list of errors is available on `error.invalidKeys` or by calling Books.simpleSchema().namedContext().invalidKeys()
+});
+```
+
+Or we can do a validated update:
+
+```js
+collection.update(book._id, {$unset: {copies: 1}}, function(error, result) {
+  //The update will fail, error will be set,
+  //and result will be undefined or false because "copies" is required.
+  //
+  //The list of errors is available on `error.invalidKeys` or by calling Books.simpleSchema().namedContext().invalidKeys()
+});
+```
+
+### Additional schemas for a Collection
+
+```js
+collection.setSchema('expanded_schema', new SimpleSchema({
+    title: {
+        type: String,
+        label: 'Title',
+        max: 200
+    },
+    'co-authors': {
+        type: String,
+        optional: true        
+    },
+    summary: {
+        type: String,
+    }
+}));
+```
+
+Our collection has a secondary schema, we can do a validated insert by that schema:
+
+```js
+collection.insert({title: "Ulysses", author: "James Joyce"}, {useSchema: 'expanded_schema'}, function(error, result) {
+  //The insert will fail, error will be set,
+  //and result will be undefined or false because "copies" is required.
+  //
+  //The list of errors is available on `error.invalidKeys` or by calling collection.getSchema('expanded_schema').namedContext().invalidKeys()
+});
+```
+
+Or we can do a validated update by that schema:
+
+```js
+collection.update(book._id, {$unset: {copies: 1}}, {useSchema: 'expanded_schema'}, function(error, result) {
+  //The update will fail, error will be set,
+  //and result will be undefined or false because "copies" is required.
+  //The list of errors is available on `error.invalidKeys` or by calling collection.getSchema('expanded_schema').namedContext().invalidKeys()
+});
+```
+### Passing Options
+
+In Meteor, the `update` function accepts an options argument. UniCollection changes the `insert` function signature to also accept options in the same way, as an optional second argument. Whenever this documentation says to "use X option", it's referring to this options argument. For example:
+```js
+collection.insert(doc, {useSchema: schemaName});
+```
+Like we see, you can choose schema by the key named "useSchema" provided in options for update and insert.
+
+### Additional SimpleSchema Options
+
+In addition to all the other schema validation options documented in the 
+[simple-schema](https://github.com/aldeed/meteor-simple-schema) package, the
+UniCollection package adds additional options explained in this section.
+
+#### denyInsert and denyUpdate
+
+If you set `denyUpdate: true`, any collection update that modifies the field
+will fail. For instance:
+```js
+var PostSchema = new SimpleSchema({
+  title: {
+    type: String
+  },
+  content: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    denyUpdate: true
+  }
+});
+
+collection.setSchema(PostSchema);
+```
+
+The `denyInsert` option works the same way, but for inserts. If you set
+`denyInsert` to true, you will need to set `optional: true` as well. 
 
 ## Documents Methods
 You can add new methods for transforming documents in two ways
