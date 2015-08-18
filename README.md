@@ -321,24 +321,21 @@ collection.setSchema(PostSchema);
 ```
 
 The `denyInsert` option works the same way, but for inserts. If you set
-`denyInsert` to true, you will need to set `optional: true` as well. 
-
+`denyInsert` to true, you will need to set `optional: true` as well.
 ## Remote methods
-    UniCollection provides remote methods on collections and documents. 
-    This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
+UniCollection provides remote methods on collections and documents. 
+This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
     
 ### Remote methods on collection
-    This kind of methods can be invoked over the network by clients from collection instance.
-    
-    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
-    
-    Additionally, handler will be have in context a collection object under this.collection.
-     Rest things like userId, connection are same as handlers in Meteor.methods have. 
-    
-    Remote methods on collection are inspired by insert/update function 
-    and all of them have callbacks for allow/deny methods. 
-    Which are called on invocation, but only first method in single invocation stack is validated.
-    It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
+This kind of methods can be invoked over the network by clients from collection instance.
+From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
+Additionally, handler will be have in context a collection object under this.collection.
+Rest things like userId, connection are same as handlers in Meteor.methods have. 
+
+Remote methods on collection are inspired by insert/update function 
+and all of them have callbacks for allow/deny methods. 
+Which are called on invocation, but only first method in single invocation stack is validated.
+It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
     
 ```js
     var collection = new UniCollection('some');
@@ -375,11 +372,10 @@ The `denyInsert` option works the same way, but for inserts. If you set
 ```
 
 ### Remote methods on document    
-    You can define methods that will be available to invoke over the network from document instance.
+You can define methods that will be available to invoke over the network from document instance.
     
-    Works in the same way as collection.methods but additionally handler will be have a document object in context
-     (this.document)
-     
+Works in the same way as collection.methods but additionally handler will be have a document object in context  (this.document)
+ 
 ```js
     var collection = new UniCollection('some');
     collection.docMethods({
