@@ -125,6 +125,26 @@ If you want create a local collection please pass in options property: `connecti
     console.log(docInstance.getTitleUppercase());
 ```
 
+- `create` Creates new instance of document for current collection. Create method accepts arguments rawDoc, options.
+
+```js
+// empty not saved instance of doc
+    var docInstance = collection.create();
+// warning: some of methods cannot work properly without some fields     
+    console.log(docInstance.getCollectionName());
+```
+You can pass a raw object of document and save it after or save it in the moment of creation by options parameter.
+
+```js
+//  not saved instance of doc
+    var docInstance = collection.create({title: 'abc'});
+// manual save
+    docInstance.save();
+// saving it in the moment of creation
+ var docInstance2 = collection.create({title: 'abcd'}, true);
+// saving it in the moment of creation with different schema
+  var docInstance3 = collection.create({title: 'abcde'}, {save: true, useSchema: 'schemaName'});
+```
 - `methods`
     Remote methods on collection that can be invoked over the network by clients from collection instance.    
     From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).    
