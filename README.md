@@ -1,3 +1,23 @@
+<img src="http://uniproject.vazco.eu/black_logo.png" />
+# Universe Collection
+##### ( replacement of Mongo.Collection ) #####
+Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
+or by preparing own class inherited from UniCollection.UniDoc.
+
+All documents know to what collection, belong.
+In simple way you can get collection from document and even make update like this: 
+
+```js
+doc.update({$set: {title: 'new title'}});
+doc.call('addItem', item);
+```
+
+And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
+
+UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
+SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
+Another good thing is that, UniCollection works with package matb33:collection-hooks.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
@@ -29,27 +49,6 @@
   - [Additional extensions for this package:](#additional-extensions-for-this-package)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-<img src="http://uniproject.vazco.eu/black_logo.png" />
-# Universe Collection
-##### ( replacement of Mongo.Collection ) #####
-Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
-or by preparing own class inherited from UniCollection.UniDoc.
-
-All documents know to what collection, belong.
-In simple way you can get collection from document and even make update like this: 
-
-```js
-doc.update({$set: {title: 'new title'}});
-doc.call('addItem', item);
-```
-
-And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
-
-UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
-SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
-Another good thing is that, UniCollection works with package matb33:collection-hooks.
-
 
 ## Installation
 
