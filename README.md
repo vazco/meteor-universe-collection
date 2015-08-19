@@ -1,3 +1,35 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Universe Collection](#universe-collection)
+  - [Installation](#installation)
+    - [How to use](#how-to-use)
+      - [Creating collection](#creating-collection)
+    - [Methods on collection object](#methods-on-collection-object)
+  - [Schemas](#schemas)
+    - [Default schema for a Collection](#default-schema-for-a-collection)
+    - [Additional schemas for a Collection](#additional-schemas-for-a-collection)
+    - [Passing Options](#passing-options)
+    - [Additional SimpleSchema Options](#additional-simpleschema-options)
+      - [denyInsert and denyUpdate](#denyinsert-and-denyupdate)
+  - [Remote methods](#remote-methods)
+    - [Remote methods on collection](#remote-methods-on-collection)
+    - [Remote methods on document](#remote-methods-on-document)
+  - [Documents Methods](#documents-methods)
+    - [Simple way:](#simple-way)
+    - [By Inheritance:](#by-inheritance)
+    - [Example use within a template](#example-use-within-a-template)
+    - [EJSONable document types](#ejsonable-document-types)
+  - [Default methods on UniCollection.UniDoc](#default-methods-on-unicollectionunidoc)
+      - [(They are default on each universe document)](#they-are-default-on-each-universe-document)
+- [UniUsers](#uniusers)
+    - [Methods on UniUsers](#methods-on-uniusers)
+  - [Documents methods on user object](#documents-methods-on-user-object)
+  - [Additional extensions for this package:](#additional-extensions-for-this-package)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 <img src="http://uniproject.vazco.eu/black_logo.png" />
 # Universe Collection
 ##### ( replacement of Mongo.Collection ) #####
