@@ -354,31 +354,8 @@ Like we see, you can choose schema by the key named "useSchema" provided in opti
 
 In addition to all the other schema validation options documented in the 
 [simple-schema](https://github.com/aldeed/meteor-simple-schema) package, the
-UniCollection package adds additional options explained in this section.
+UniCollection package adds additional options uniUI in this section.
 
-#### denyInsert and denyUpdate
-
-If you set `denyUpdate: true`, any collection update that modifies the field
-will fail. For instance:
-```js
-var PostSchema = new SimpleSchema({
-  title: {
-    type: String
-  },
-  content: {
-    type: String
-  },
-  createdAt: {
-    type: Date,
-    denyUpdate: true
-  }
-});
-
-collection.setSchema(PostSchema);
-```
-
-The `denyInsert` option works the same way, but for inserts. If you set
-`denyInsert` to true, you will need to set `optional: true` as well.
 ## Remote methods
 UniCollection provides remote methods on collections and documents. 
 This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
