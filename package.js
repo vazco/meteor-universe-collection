@@ -1,7 +1,7 @@
 Package.describe({
     summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
     name: 'vazco:universe-collection',
-    version: '1.8.5',
+    version: '1.8.6',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
