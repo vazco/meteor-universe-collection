@@ -1,7 +1,7 @@
 Package.describe({
     summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
-    name: 'vazco:universe-collection',
-    version: '1.8.8',
+    name: 'universe:collection',
+    version: '2.0.0',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -10,21 +10,20 @@ Package.onUse(function (api) {
     api.use([
         'ejson',
         'check',
+        'ecmascript',
         'underscore',
-        'accounts-base',
         'mongo',
         'minimongo',
-        'vazco:universe-utilities@1.1.5',
-        'aldeed:simple-schema@1.3.2'
+        'universe:utilities@2.0.0',
+        'aldeed:simple-schema@1.3.3'
     ]);
 
     api.imply('aldeed:simple-schema');
 
-    api.use(['matb33:collection-hooks@0.7.13', 'insecure@1.0.0'], {weak: true});
+    api.use(['matb33:collection-hooks@0.7.13', 'accounts-base', 'insecure@1.0.0'], {weak: true});
 
     api.addFiles([
         'lib/UniCollection.js',
-        'lib/UniCollectionValidators.js',
         'lib/UniCollectionSS.js',
         'lib/UniMethods.js',
         'lib/docPrototypes/UniDoc.js',
