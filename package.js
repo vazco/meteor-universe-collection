@@ -30,7 +30,8 @@ Package.onUse(function (api) {
         'lib/UniUsers.js',
         'lib/docPrototypes/UniUser.js',
         'lib/BasicSchema.js',
-        'lib/UniSecure.js'
+        'lib/UniSecure.js',
+        'lib/UniHooks.js'
     ]);
 
     api.export([
