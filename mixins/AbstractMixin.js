@@ -9,8 +9,8 @@ class AbstractMixin {
 
         this.name = name || this.name;
         if (typeof this.name !== 'string') {
-            this.name = 'unnamed_' + ++unnamed;
-            console.warn('Mixin should have name, temporally named as:', this.name);
+            this.name = '_unnamed_' + ++unnamed;
+            Meteor._debug && Meteor._debug('UniCollection mixin should have name, temporally named as:', this.name);
         }
     }
 }
