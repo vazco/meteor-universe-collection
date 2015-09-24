@@ -22,7 +22,7 @@ Package.onUse(function (api) {
 
     api.imply('aldeed:simple-schema');
 
-    api.use(['accounts-base', 'insecure@1.0.0'], {weak: true});
+    api.use(['accounts-base'], {weak: true});
 
     api.addFiles([
         'lib/UniCollection.js',
@@ -38,7 +38,8 @@ Package.onUse(function (api) {
 
     api.addFiles([
         'mixins/AbstractMixin.js',
-        'mixins/BackupMixin.js'
+        'mixins/BackupMixin.js',
+        'mixins/ShowErrorMixin.js'
     ]);
 
     api.export([
