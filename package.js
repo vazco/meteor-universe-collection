@@ -16,7 +16,7 @@ Package.onUse(function (api) {
         'underscore',
         'mongo',
         'minimongo',
-        'universe:utilities@2.0.3',
+        'universe:utilities@2.0.4',
         'aldeed:simple-schema@1.3.3'
     ]);
 
