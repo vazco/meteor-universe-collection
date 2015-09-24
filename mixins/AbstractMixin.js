@@ -1,4 +1,5 @@
 'use strict';
+let unnamed = 0;
 
 class AbstractMixin {
     constructor (name) {
@@ -8,7 +9,8 @@ class AbstractMixin {
 
         this.name = name || this.name;
         if (typeof this.name !== 'string') {
-            console.warn('Mixin should have name');
+            this.name = 'unnamed_' + ++unnamed;
+            console.warn('Mixin should have name, temporally named as:', this.name);
         }
     }
 }
@@ -17,11 +19,11 @@ UniCollection.AbstractMixin = AbstractMixin;
 
 UniCollection.mixins = {};
 
-UniCollection.createMixin = (cls) => {
-    return class UniCollectionMixin extends AbstractMixin {
-        constructor () {
-            super(cls.name);
-            _.extend(this, cls);
-        }
-    };
+UniCollection.createMixinClass = (cls) => {
+    check(cls, Object);
+    class UniCollectionMixin extends AbstractMixin {}
+    Object.keys(cls).forEach((key) => {
+        UniCollectionMixin.prototype[key] = cls[key];
+    });
+    return UniCollectionMixin;
 };
