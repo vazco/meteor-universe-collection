@@ -14,13 +14,13 @@ Package.onUse(function (api) {
         'underscore',
         'mongo',
         'minimongo',
-        'universe:utilities@2.0.0',
+        'universe:utilities@2.0.3',
         'aldeed:simple-schema@1.3.3'
     ]);
 
     api.imply('aldeed:simple-schema');
 
-    api.use(['matb33:collection-hooks@0.7.13', 'accounts-base', 'insecure@1.0.0'], {weak: true});
+    api.use(['accounts-base', 'insecure@1.0.0'], {weak: true});
 
     api.addFiles([
         'lib/UniCollection.js',
@@ -32,6 +32,10 @@ Package.onUse(function (api) {
         'lib/BasicSchema.js',
         'lib/UniSecure.js',
         'lib/UniHooks.js'
+    ]);
+
+    api.addFiles([
+        'mixins/UniCollectionAbstractMixin.js'
     ]);
 
     api.export([
