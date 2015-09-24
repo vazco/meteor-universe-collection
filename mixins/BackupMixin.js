@@ -2,11 +2,12 @@
 
 class BackupMixin extends UniCollection.AbstractMixin {
     constructor ({
+        name = 'Backup',
         backupOnRemove  = true,
         removeOnRestore = true,
         updateOnRestore = false
     } = {}) {
-        super('BackupMixin');
+        super(name);
 
         this.backupOnRemove  = backupOnRemove;
         this.removeOnRestore = removeOnRestore;
