@@ -60,9 +60,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
             collection.call('restore', selector, options);
         };
 
-        if (this.backupOnRemove) {
-            collection.onBeforeCall('remove', 'backup', id => collection.backup(id));
-        }
+        collection.onBeforeCall('remove', 'backup', (...args) => this.softRemove(collection, ...args));
     }
 
     backup (collection, selector = {}) {
@@ -79,11 +77,11 @@ class BackupMixin extends UniCollection.AbstractMixin {
         updateOnRestore = this.updateOnRestore
     } = {}) {
         collection.backupCollection.find(selector).forEach(document => {
-            const object = document.toJSONValue();
+            var object = document.toJSONValue();
             delete object._backupAt;
 
             if (updateOnRestore) {
-                collection.upsert(document._id, object);
+                collection.upsert(object._id, object);
             } else {
                 collection.insert(object);
             }
@@ -92,6 +90,12 @@ class BackupMixin extends UniCollection.AbstractMixin {
                 document.remove();
             }
         });
+    }
+
+    softRemove (collection, id) {
+        if (this.backupOnRemove) {
+            collection.backup(id);
+        }
     }
 }
 
