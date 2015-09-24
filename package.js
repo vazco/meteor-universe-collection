@@ -1,3 +1,5 @@
+'use strict';
+
 Package.describe({
     summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
     name: 'universe:collection',
