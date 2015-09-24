@@ -37,7 +37,8 @@ Package.onUse(function (api) {
     ]);
 
     api.addFiles([
-        'mixins/UniCollectionAbstractMixin.js'
+        'mixins/AbstractMixin.js',
+        'mixins/BackupMixin.js'
     ]);
 
     api.export([
