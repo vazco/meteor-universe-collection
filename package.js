@@ -3,7 +3,7 @@
 Package.describe({
     summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
     name: 'universe:collection',
-    version: '2.0.0',
+    version: '2.0.0-alpha',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -36,10 +36,13 @@ Package.onUse(function (api) {
         'lib/UniHooks.js'
     ]);
 
+    api.addFiles('lib/UniPublish.js', 'server');
+
     api.addFiles([
         'mixins/AbstractMixin.js',
         'mixins/BackupMixin.js',
-        'mixins/ShowErrorMixin.js'
+        'mixins/ShowErrorMixin.js',
+        'mixins/PublishAccessMixin.js'
     ]);
 
     api.export([

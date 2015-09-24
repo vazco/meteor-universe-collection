@@ -1,4 +1,9 @@
-<img src="http://uniproject.vazco.eu/black_logo.png" />
+<a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
+
+## In development
+This is version alpha if you want use it in production please use stable version
+under [this link](https://atmospherejs.com/vazco/universe-collection)
+
 # Universe Collection
 ##### ( replacement of Mongo.Collection ) #####
 Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,

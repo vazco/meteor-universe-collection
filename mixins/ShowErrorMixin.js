@@ -1,3 +1,4 @@
+'use strict';
 /**
  * ShowErrorMixin
  * new ShowErrorMixin(params={})
@@ -60,7 +61,7 @@ class ShowErrorMixin extends UniCollection.AbstractMixin {
      * @param {function=} onErrorFn
      */
     _addErrorSupport(fnName, collection, onErrorFn) {
-        collection.onBeforeCall(fnName, 'ShowError', function (...args) {
+        collection.onBeforeCall(fnName, 'ShowError', function () {
             let cb = this.getCallback();
             this.setCallback(function (err) {
                 if (err) {
