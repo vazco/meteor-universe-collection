@@ -6,7 +6,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
         removeOnRestore = true,
         updateOnRestore = false
     } = {}) {
-        super();
+        super('BackupMixin');
 
         this.backupOnRemove  = backupOnRemove;
         this.removeOnRestore = removeOnRestore;
@@ -15,12 +15,35 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
     mount (collection) {
         collection.backupCollection = new UniCollection(collection.getCollectionName() + 'Backup');
+        collection.backupCollection.create = collection.create.bind(collection);
+        collection.backupCollection._validators = collection._validators;
+        collection.backupCollection._universeValidators = collection._universeValidators;
 
-        collection.backup = this.backup.bind(this, collection);
-        collection.restore = this.restore.bind(this, collection);
+        collection.methods({
+            backup: this.backup.bind(this, collection),
+            restore: this.restore.bind(this, collection)
+        });
+
+        collection.docHelpers({
+            backup: function () {
+                collection.call('backup', this._id);
+            },
+
+            restore: function (options = {}) {
+                collection.call('restore', this._id, options);
+            }
+        });
+
+        collection.backup = (selector = {}) => {
+            collection.call('backup', selector);
+        };
+
+        collection.restore = (selector = {}, options = {}) => {
+            collection.call('restore', selector, options);
+        };
 
         if (this.backupOnRemove) {
-            collection.onBeforeCall('remove', 'backup', collection.backup);
+            collection.onBeforeCall('remove', 'backup', id => collection.backup(id));
         }
     }
 
