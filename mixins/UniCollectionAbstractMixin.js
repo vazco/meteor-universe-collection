@@ -1,6 +1,6 @@
-class UniCollectionAbstractMixin {
+class AbstractMixin {
     constructor() {
-        if (typeof this.mixinDidMount === 'function') {
+        if (typeof this.mount === 'function') {
             throw new TypeError('this.mixinDidMount(collection, options) method must be implemented');
         }
         if (typeof this.name !== 'string') {
@@ -9,10 +9,10 @@ class UniCollectionAbstractMixin {
     }
 }
 
-UniCollection.UniCollectionAbstractMixin = UniCollectionAbstractMixin;
+UniCollection.AbstractMixin = AbstractMixin;
 
 UniCollection.createMixin = (cls) => {
-    const UniCollectionMixin = class UniCollectionMixin extends UniCollectionAbstractMixin {};
+    const UniCollectionMixin = class UniCollectionMixin extends AbstractMixin {};
     UniCollectionMixin.prototype = cls;
     return UniCollectionMixin;
 };
