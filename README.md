@@ -10,7 +10,7 @@ Collections on steroids, you can defined own remote methods, documents helpers b
 or by preparing own class inherited from UniCollection.UniDoc.
 
 All documents know to what collection, belong.
-In simple way you can get collection from document and even make update like this: 
+In simple way you can get collection from document and even make update like this:
 
 ```js
 doc.update({$set: {title: 'new title'}});
@@ -24,7 +24,7 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents** 
+**Table of Contents**
 
   - [Installation](#installation)
     - [How to use](#how-to-use)
@@ -84,12 +84,12 @@ use this:
 
 Universe collection (as opposed to Meteor Collection) always must have name.
 If you want create a local collection please pass in options property: `connection: null`, instead null as a first parameter
- 
+
 ### Methods on collection object
-- `setDocumentPrototype(transformationObject)` 
+- `setDocumentPrototype(transformationObject)`
 
     Sets transformation function for collection.
-    
+
     Function passed as an argument will be executed for each document
 
     to transform selected documents before the method (like: find, findOne) returns them.
@@ -100,16 +100,16 @@ If you want create a local collection please pass in options property: `connecti
 
 ```js
     var collection = new UniCollection('some');
-    
+
     // getting new prototype of UniDoc
     var myDocProto = UniDoc.extend();
-    
+
     //Adding new method to prototype of myDoc.
     myDocProto.prototype.getTitleUppercase = function(){ return this.title.toLocaleUpperCase(); }
-    
+
     //setting new prototype to collection
-    collection.setDocumentPrototype(myDocProto); 
-    
+    collection.setDocumentPrototype(myDocProto);
+
     var docInstance = collection.findOne();
     console.log(docInstance.getTitleUppercase());
 ```
@@ -131,7 +131,7 @@ If you want create a local collection please pass in options property: `connecti
                 return this.title.toLocaleUpperCase();
           }
     });
-    
+
     var docInstance = collection.findOne();
     console.log(docInstance.getTitleUppercase());
 ```
@@ -141,7 +141,7 @@ If you want create a local collection please pass in options property: `connecti
 ```js
 // empty not saved instance of doc
     var docInstance = collection.create();
-// warning: some of methods cannot work properly without some fields     
+// warning: some of methods cannot work properly without some fields
     console.log(docInstance.getCollectionName());
 ```
 You can pass a raw object of document and save it after or save it in the moment of creation by options parameter.
@@ -157,14 +157,14 @@ You can pass a raw object of document and save it after or save it in the moment
   var docInstance3 = collection.create({title: 'abcde'}, {save: true, useSchema: 'schemaName'});
 ```
 - `methods`
-    Remote methods on collection that can be invoked over the network by clients from collection instance.    
-    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).    
+    Remote methods on collection that can be invoked over the network by clients from collection instance.
+    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
     Additionally, handler will be have in context a collection object under this.collection.
-     Rest things like userId, connection are same as handlers in Meteor.methods have. 
+     Rest things like userId, connection are same as handlers in Meteor.methods have.
 
-- `docMethods`    
+- `docMethods`
     Remote methods on document that can be invoked over the network by clients from document instance.
-    
+
 
 - `hasDocument(docOrId)`
 
@@ -250,7 +250,7 @@ collection.setSchema('default', new SimpleSchema({
 }));
 //getting default schema
 collection.getSchema()
-//or 
+//or
 collection.getSchema('default')
 ```
 
@@ -287,7 +287,7 @@ collection.setSchema('expanded_schema', new SimpleSchema({
     },
     'co-authors': {
         type: String,
-        optional: true        
+        optional: true
     },
     summary: {
         type: String,
@@ -327,25 +327,25 @@ Like we see, you can choose schema by the key named "useSchema" provided in opti
 
 ### Additional SimpleSchema Options
 
-In addition to all the other schema validation options documented in the 
+In addition to all the other schema validation options documented in the
 [simple-schema](https://github.com/aldeed/meteor-simple-schema) package, the
 UniCollection package adds additional options uniUI in this section.
 
 ## Remote methods
-UniCollection provides remote methods on collections and documents. 
+UniCollection provides remote methods on collections and documents.
 This works like Meteor.methods, Meteor.call, Meteor.apply but it works on collection and document.
-    
+
 ### Remote methods on collection
 This kind of methods can be invoked over the network by clients from collection instance.
 From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
 Additionally, handler will be have in context a collection object under this.collection.
-Rest things like userId, connection are same as handlers in Meteor.methods have. 
+Rest things like userId, connection are same as handlers in Meteor.methods have.
 
-Remote methods on collection are inspired by insert/update function 
-and all of them have callbacks for allow/deny methods. 
+Remote methods on collection are inspired by insert/update function
+and all of them have callbacks for allow/deny methods.
 Which are called on invocation, but only first method in single invocation stack is validated.
 It mean that one function on server side calls another, "allow/deny" validation will be checked only for first one.
-    
+
 ```js
     var collection = new UniCollection('some');
     collection.methods({
@@ -363,7 +363,7 @@ It mean that one function on server side calls another, "allow/deny" validation 
     });
     //also you can provide callbacks for deny function
     collection.allow({
-        //value of document variable will be null for remote collection methods    
+        //value of document variable will be null for remote collection methods
         getX: function(userId, document, args, invocation){
             return true;
         },
@@ -377,28 +377,28 @@ It mean that one function on server side calls another, "allow/deny" validation 
     //Invoke a method passing an array of arguments.
     collection.apply('getX', [1, 2, 3]);
     //calling with callback
-    collection.call('getY', function(error, result){ console.log(error, result); });    
+    collection.call('getY', function(error, result){ console.log(error, result); });
 ```
 
-### Remote methods on document    
+### Remote methods on document
 You can define methods that will be available to invoke over the network from document instance.
-    
+
 Works in the same way as collection.methods but additionally handler will be have a document object in context  (this.document)
- 
+
 ```js
     var collection = new UniCollection('some');
     collection.docMethods({
         addItem: function(item){
-            return this.document.update({$set: {item: item}});            
+            return this.document.update({$set: {item: item}});
         }
     });
     //also you can provide callbacks for deny function
-    collection.allow({  
+    collection.allow({
         addItem: function(userId, document, args, invocation){
             return true;
         }
     });
-    
+
     var doc = collection.findOne();
     doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
 ```
@@ -472,11 +472,11 @@ with the corresponding template:
 </template>
 ```
 
-## Hooks 
+## Hooks
 sync hooks: 'find','findOne','setSchema','create'
 with async support: 'insert','update','remove', 'upsert'
 hooks can be added for all remote methods on collection and documents
- 
+
 - `onBeforeCall(hookName, idName, method, isOverride=false)`
 - `onAfterCall(hookName, idName, method, isOverride=false)`
 
@@ -486,7 +486,7 @@ Removing unnecessary hooks
 
 ### Context in hook
 #### Shared context
-Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.   
+Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.
 
 ```
 collection.update({_id: 'a23df2c5dfK'}, {$set: { title: 'something'}});
@@ -517,7 +517,7 @@ Available only in before hooks, that can be potentially async methods (like inse
 
 #### Useful helpers in UniUtils (in package: universe:utilities)
 
-- `UniUtils.getFieldsFromUpdateModifier(modifier)`  
+- `UniUtils.getFieldsFromUpdateModifier(modifier)`
 Gets array of top-level fields, which will be changed by modifier (this from update method)
 - `UniUtils.getPreviewOfDocumentAfterUpdate(updateModifier, oldDoc = {}) `
 Gets simulation of new version of document passed as a second argument
@@ -525,7 +525,7 @@ Gets simulation of new version of document passed as a second argument
 ### Direct call without hooks
 All direct method for collection are available in `collection.direct`
 For documents in `collection.direct.doc`.
-In context of hook handler is `this.call Direct()`, which gives possibility of circumventing hooks to method, 
+In context of hook handler is `this.call Direct()`, which gives possibility of circumventing hooks to method,
 for which is current hook.
 
 ### Arguments passed to hook
@@ -540,13 +540,14 @@ collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier
 
 ## Mixins
  *under active development*
- 
+
 ### Mounting
- To add some mixin to collection, just create new instance of mixin class 
+ To add some mixin to collection, just create new instance of mixin class
  and pass them to as a item of array, under key mixins in options of UniCollection constructor.
 ```
 myColl = new UniCollection('myColl', {
     mixins: [
+        // example at unicollection.backup.meteor.com
         new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
         new UniCollection.mixins.PublishAccessMixin(),
         new UniCollection.mixins.ShowErrorMixin()
@@ -584,8 +585,8 @@ var MyNewMixin = UniCollection.createMixinClass({
 });
 ```
 
-Collection when attaches a mixin to self, 
-it launches method mount on mixin where pass self as a first argument and self options as a second one. 
+Collection when attaches a mixin to self,
+it launches method mount on mixin where pass self as a first argument and self options as a second one.
 
 ### EJSONable document types
 
@@ -696,7 +697,7 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 
 ## Additional extensions for this package:
 
-- [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document) 
+- [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
 
