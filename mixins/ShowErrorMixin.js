@@ -11,7 +11,6 @@
  *          (as a value can be passed a custome function of errorDisplayer)
  */
 class ShowErrorMixin extends UniCollection.AbstractMixin {
-
     constructor({name = 'ShowError', ...params} = {}) {
         super(name);
         this.params = params;

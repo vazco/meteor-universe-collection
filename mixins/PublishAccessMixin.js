@@ -25,12 +25,11 @@
  * Meteor.publish is expected to do their own access to checking instead relying on allow and deny.
  */
 class PublishAccessMixin extends UniCollection.AbstractMixin {
-
-    constructor() {
+    constructor () {
         super('PublishAccessMixin');
     }
 
-    mount(collection) {
+    mount (collection) {
         collection.addNewAllowDenyValidatorType('publish');
 
         collection._uniPublishAddedHandler = PublishAccessMixin._uniPublishAddedHandler.bind(collection);
@@ -39,7 +38,7 @@ class PublishAccessMixin extends UniCollection.AbstractMixin {
 
     }
 
-    static _uniPublishAddedHandler (publishCtx, collectionName, id, doc){
+    static _uniPublishAddedHandler (publishCtx, collectionName, id, doc) {
         if (this.validateUniverseRule('publish', publishCtx.userId, doc, publishCtx._name)) {
             publishCtx._uniDocCounts[collectionName][id]++;
             publishCtx._directAdded(collectionName, id, doc);
@@ -48,7 +47,7 @@ class PublishAccessMixin extends UniCollection.AbstractMixin {
         }
     }
 
-    static _uniPublishChangedHandler (publishCtx, collectionName, id, changedFields, allowedFields){
+    static _uniPublishChangedHandler (publishCtx, collectionName, id, changedFields, allowedFields) {
         var hasOldDoc = UniUtils.get(publishCtx, '_documents.' + collectionName + '.' + id);
         var doc = this.findOne(id, {fields: allowedFields || undefined});
         var newAccess = this.validateUniverseRule('publish', publishCtx.userId, doc, publishCtx._name);
@@ -58,11 +57,11 @@ class PublishAccessMixin extends UniCollection.AbstractMixin {
         }
         //if we lost access
         if (hasOldDoc && !newAccess) {
-            return collection._uniPublishRemovedHandler(publishCtx, collectionName, id);
+            return this._uniPublishRemovedHandler(publishCtx, collectionName, id);
         }
         //if we gained access, quickly adds doc
         if (!hasOldDoc && newAccess) {
-            return collection._uniPublishAddedHandler(publishCtx, collectionName, id, doc);
+            return this._uniPublishAddedHandler(publishCtx, collectionName, id, doc);
         }
         //adding changes
         publishCtx._directChanged(collectionName, id, changedFields);
@@ -70,7 +69,7 @@ class PublishAccessMixin extends UniCollection.AbstractMixin {
         return true;
     }
 
-    static _uniPublishRemovedHandler (publishCtx, collectionName, id){
+    static _uniPublishRemovedHandler (publishCtx, collectionName, id) {
         if (!publishCtx._uniDocCounts[collectionName] || publishCtx._uniDocCounts[collectionName][id] <= 0) {
             return;
         }
@@ -80,7 +79,7 @@ class PublishAccessMixin extends UniCollection.AbstractMixin {
             publishCtx._stopObserveHandlesAndCleanUp(collectionName, id);
             return publishCtx._directRemoved(collectionName, id);
         }
-    };
+    }
 }
 
 UniCollection.mixins.PublishAccessMixin = PublishAccessMixin;
