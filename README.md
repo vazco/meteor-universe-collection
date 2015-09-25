@@ -6,7 +6,7 @@ under [this link](https://atmospherejs.com/vazco/universe-collection)
 
 # Universe Collection
 ##### ( replacement of Mongo.Collection ) #####
-Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
+Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
 
 All documents know to what collection, belong.
@@ -21,7 +21,6 @@ And because this are EJSONable document types, you can use them for example with
 
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
 SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
-Another good thing is that, UniCollection works with package matb33:collection-hooks.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -197,11 +196,11 @@ You can pass a raw object of document and save it after or save it in the moment
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
-    As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
+   As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
-    but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
+   but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
 
-    And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+   And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
 
 
 - `matchingDocument(keysPatterns=)`
