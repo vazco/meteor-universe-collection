@@ -38,7 +38,7 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
   - [Remote methods](#remote-methods)
     - [Remote methods on collection](#remote-methods-on-collection)
     - [Remote methods on document](#remote-methods-on-document)
-  - [Documents Methods](#documents-methods)
+  - [Documents Helpers](#documents-helpers)
     - [Simple way:](#simple-way)
     - [By Inheritance:](#by-inheritance)
     - [Example use within a blaze template](#example-use-within-a-blaze-template)
@@ -114,7 +114,7 @@ If you want create a local collection please pass in options property: `connecti
     console.log(docInstance.getTitleUppercase());
 ```
 
-- `helpers(objectWithMethods)`
+- `docHelpers(objectWithMethods)`
 
        Using this method you can add new helpers function into document prototype.
 
@@ -403,7 +403,7 @@ Works in the same way as collection.methods but additionally handler will be hav
     doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
 ```
 
-## Documents Methods
+## Documents Helpers
 You can add new methods for transforming documents in two ways
 
 ### Simple way:
