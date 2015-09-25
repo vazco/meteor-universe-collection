@@ -64,9 +64,10 @@ class BackupMixin extends UniCollection.AbstractMixin {
     }
 
     backup (collection, selector = {}) {
-        collection.find(selector).forEach(document => {
+        collection.find(selector).forEach((document) => {
+            let jValue = document.toJSONValue();
             collection.backupCollection.upsert(document._id, {
-                ...document.toJSONValue(),
+                ...jValue,
                 _backupAt: new Date()
             });
         });
