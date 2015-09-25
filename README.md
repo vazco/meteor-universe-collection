@@ -1,6 +1,6 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
-## In development
+## Under active development
 This is version alpha if you want use it in production please use stable version
 under [this link](https://atmospherejs.com/vazco/universe-collection)
 
@@ -164,19 +164,6 @@ You can pass a raw object of document and save it after or save it in the moment
 
     Checks if document belongs to this collection
 
-
-- `addErrorSupportToUpdates(onErrorFn)`
-
-      Adds error support for all updates on client side, even if callback for update wasn't provided.
-
-      When update is unsuccessful function 'onErrorFn' will be called
-
-      param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
-
-      for 'header' place will be called or alert if UniUI.setErrorMessage is missing
-
-      (You can override this logic by replacing UniCollection._showError)
-
 - `setDefaultSort(options)`
 
     Adds default sort options to find,
@@ -219,29 +206,6 @@ You can pass a raw object of document and save it after or save it in the moment
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
-
-- `addErrorSupportToInserts(onErrorFn)`
-
-      Adds error support for all inserts on client side
-
-      It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToRemoves(onErrorFn)`
-
-       Adds error support for all removes on client side
-
-
-- `addErrorSupportToUpserts(onErrorFn)`
-
-       It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToAllWriteMethods(onErrorFn)`
-
-    Adds error callback to each one write methods
-
-    param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
 
 ## Schemas
 
@@ -477,7 +441,7 @@ Inheritance takes place by  calling extend() method on other UniDoc object
     Colls.Books.setConstructor(YourDocProto);
 ```
 
-### Example use within a template
+### Example use within a blaze template
 
 Methods on document you can use instead template helpers:
 This can help you of avoiding unnecessary template helpers
@@ -500,6 +464,121 @@ with the corresponding template:
         {{/each}}
     </ul>
 </template>
+```
+
+## Mixins
+ *under active development*
+ 
+### Mounting
+ To add some mixin to collection, just create new instance of mixin class 
+ and pass them to as a item of array, under key mixins in options of UniCollection constructor.
+```
+myColl = new UniCollection('myColl', {
+    mixins: [
+        new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
+        new UniCollection.mixins.PublishAccessMixin(),
+        new UniCollection.mixins.ShowErrorMixin()
+    ],
+});
+```
+As you can see some of mixins can have own options, that can be passed to constructor.
+*Details of this options you can find in documentation of proper mixin.*
+
+### Creating own mixin
+There are two ways.
+One of them is just simple using inheritance by es6 from abstract class `UniCollection.AbstractMixin`
+
+```
+class MyNewMixin extends UniCollection.AbstractMixin {
+
+    constructor({name = 'MyNewMixin', ...params} = {}) {
+        super(name);
+    }
+
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+}
+```
+
+But if you don't use es6 or you want different, there is another way (using of UniCollection.createMixinClass)
+
+```
+var MyNewMixin = UniCollection.createMixinClass({
+    name: 'MyNewMixin',
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+});
+```
+
+Collection when attaches a mixin to self, 
+it launches method mount on mixin where pass self as a first argument and self options as a second one. 
+
+## Hooks 
+sync hooks: 'find','findOne','setSchema','create'
+with async support: 'insert','update','remove', 'upsert'
+hooks can be added for all remote methods on collection and documents
+ 
+- `onBeforeCall(hookName, idName, method, isOverride=false)`
+- `onAfterCall(hookName, idName, method, isOverride=false)`
+
+Removing unnecessary hooks
+- `offBeforeCall(hookName, idName)`
+- `offAfterCall(hookName, idName)`
+
+### Context in hook
+#### Shared context
+Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.   
+
+```
+collection.update({_id: 'a23df2c5dfK'}, {$set: { title: 'something'}});
+collection.onBeforeCall('update', 'myGreatHook', function(selector, modifier){
+    this.doc = collection.findOne(selector);
+});
+
+collection.onAfterCall('update', 'myGreatHookAfterUpdate', function(){
+    console.log('before update doc looked like this', this.doc);
+});
+```
+
+#### Stuff in context
+Helpers
+- `getCollection()` Collection instance
+- `getMethodName()` Hook for method
+- `getMethodContext()` Context of method for which is hook
+- `callDirect()` Direct access to method (without any hooks)
+- `isAfter()` It tells if hook is after or before
+
+properties
+- `currentHookId` current idName of hook
+- `return` - return value (available for after hooks)
+
+Available only in before hooks, that can be potentially async methods (like insert/update/remote method)
+- `getCallback()` It returns callback function if exists
+- `setCallback()` It sets new callback for async method
+
+#### Useful helpers in UniUtils (in package: universe:utilities)
+
+- `UniUtils.getFieldsFromUpdateModifier(modifier)`  
+Gets array of top-level fields, which will be changed by modifier (this from update method)
+- `UniUtils.getPreviewOfDocumentAfterUpdate(updateModifier, oldDoc = {}) `
+Gets simulation of new version of document passed as a second argument
+
+### Direct call without hooks
+All direct method for collection are available in `collection.direct`
+For documents in `collection.direct.doc`.
+In context of hook handler is `this.call Direct()`, which gives possibility of circumventing hooks to method, 
+for which is current hook.
+
+### Arguments passed to hook
+Hook handler has the same parameter as are passed for method.
+Only callbacks passed as last argument are provided by this.getCallback() instead of be in arguments.
+
+```
+collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier, options){
+   console.log('argumentsLogger', selector, modifier, options).
+});
 ```
 
 ### EJSONable document types
@@ -634,7 +713,6 @@ Setting new permission for user you can set only on server side, by method on un
 
 ## Additional extensions for this package:
 
-- [Universe Access & Mappings](https://atmospherejs.com/vazco/universe-access)
 - [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document) 
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
