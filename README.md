@@ -1,7 +1,12 @@
-<img src="http://uniproject.vazco.eu/black_logo.png" />
+<a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
+
+## Under active development
+This is version 2.0.0-beta if you want use it in production please use stable version
+under [this link](https://atmospherejs.com/vazco/universe-collection)
+
 # Universe Collection
 ##### ( replacement of Mongo.Collection ) #####
-Collections on steroids, you can defined own documents helpers by adding its using simple helpers method,
+Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
 
 All documents know to what collection, belong.
@@ -16,13 +21,11 @@ And because this are EJSONable document types, you can use them for example with
 
 UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
 SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
-Another good thing is that, UniCollection works with package matb33:collection-hooks.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents** 
 
-- [Universe Collection](#universe-collection)
   - [Installation](#installation)
     - [How to use](#how-to-use)
       - [Creating collection](#creating-collection)
@@ -32,17 +35,25 @@ Another good thing is that, UniCollection works with package matb33:collection-h
     - [Additional schemas for a Collection](#additional-schemas-for-a-collection)
     - [Passing Options](#passing-options)
     - [Additional SimpleSchema Options](#additional-simpleschema-options)
-      - [denyInsert and denyUpdate](#denyinsert-and-denyupdate)
   - [Remote methods](#remote-methods)
     - [Remote methods on collection](#remote-methods-on-collection)
     - [Remote methods on document](#remote-methods-on-document)
-  - [Documents Methods](#documents-methods)
+  - [Documents Helpers](#documents-helpers)
     - [Simple way:](#simple-way)
     - [By Inheritance:](#by-inheritance)
-    - [Example use within a template](#example-use-within-a-template)
+    - [Example use within a blaze template](#example-use-within-a-blaze-template)
+  - [Hooks](#hooks)
+    - [Context in hook](#context-in-hook)
+      - [Shared context](#shared-context)
+      - [Stuff in context](#stuff-in-context)
+      - [Useful helpers in UniUtils](#useful-helpers-in-uniutils-in-package-universeutilities)
+    - [Direct call without hooks](#direct-call-without-hooks)
+    - [Arguments passed to hook](#arguments-passed-to-hook)
+  - [Mixins](#mixins)
+    - [Mounting](#mounting)
+    - [Creating own mixin](#creating-own-mixin)
     - [EJSONable document types](#ejsonable-document-types)
   - [Default methods on UniCollection.UniDoc](#default-methods-on-unicollectionunidoc)
-      - [(They are default on each universe document)](#they-are-default-on-each-universe-document)
 - [UniUsers](#uniusers)
     - [Methods on UniUsers](#methods-on-uniusers)
   - [Documents methods on user object](#documents-methods-on-user-object)
@@ -103,7 +114,7 @@ If you want create a local collection please pass in options property: `connecti
     console.log(docInstance.getTitleUppercase());
 ```
 
-- `helpers(objectWithMethods)`
+- `docHelpers(objectWithMethods)`
 
        Using this method you can add new helpers function into document prototype.
 
@@ -159,19 +170,6 @@ You can pass a raw object of document and save it after or save it in the moment
 
     Checks if document belongs to this collection
 
-
-- `addErrorSupportToUpdates(onErrorFn)`
-
-      Adds error support for all updates on client side, even if callback for update wasn't provided.
-
-      When update is unsuccessful function 'onErrorFn' will be called
-
-      param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
-
-      for 'header' place will be called or alert if UniUI.setErrorMessage is missing
-
-      (You can override this logic by replacing UniCollection._showError)
-
 - `setDefaultSort(options)`
 
     Adds default sort options to find,
@@ -196,11 +194,11 @@ You can pass a raw object of document and save it after or save it in the moment
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
-    As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
+   As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
-    but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
+   but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
 
-    And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+   And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
 
 
 - `matchingDocument(keysPatterns=)`
@@ -214,29 +212,6 @@ You can pass a raw object of document and save it after or save it in the moment
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
 ```
-
-- `addErrorSupportToInserts(onErrorFn)`
-
-      Adds error support for all inserts on client side
-
-      It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToRemoves(onErrorFn)`
-
-       Adds error support for all removes on client side
-
-
-- `addErrorSupportToUpserts(onErrorFn)`
-
-       It works like addErrorSupportToUpdates
-
-
-- `addErrorSupportToAllWriteMethods(onErrorFn)`
-
-    Adds error callback to each one write methods
-
-    param onErrorFn (optional) If is not passed then UniUI.setErrorMessage
 
 ## Schemas
 
@@ -428,7 +403,7 @@ Works in the same way as collection.methods but additionally handler will be hav
     doc.call('addItem', 'someItem', function(error, result){ console.log(error, result); });
 ```
 
-## Documents Methods
+## Documents Helpers
 You can add new methods for transforming documents in two ways
 
 ### Simple way:
@@ -472,7 +447,7 @@ Inheritance takes place by  calling extend() method on other UniDoc object
     Colls.Books.setConstructor(YourDocProto);
 ```
 
-### Example use within a template
+### Example use within a blaze template
 
 Methods on document you can use instead template helpers:
 This can help you of avoiding unnecessary template helpers
@@ -496,6 +471,121 @@ with the corresponding template:
     </ul>
 </template>
 ```
+
+## Hooks 
+sync hooks: 'find','findOne','setSchema','create'
+with async support: 'insert','update','remove', 'upsert'
+hooks can be added for all remote methods on collection and documents
+ 
+- `onBeforeCall(hookName, idName, method, isOverride=false)`
+- `onAfterCall(hookName, idName, method, isOverride=false)`
+
+Removing unnecessary hooks
+- `offBeforeCall(hookName, idName)`
+- `offAfterCall(hookName, idName)`
+
+### Context in hook
+#### Shared context
+Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.   
+
+```
+collection.update({_id: 'a23df2c5dfK'}, {$set: { title: 'something'}});
+collection.onBeforeCall('update', 'myGreatHook', function(selector, modifier){
+    this.doc = collection.findOne(selector);
+});
+
+collection.onAfterCall('update', 'myGreatHookAfterUpdate', function(){
+    console.log('before update doc looked like this', this.doc);
+});
+```
+
+#### Stuff in context
+Helpers
+- `getCollection()` Collection instance
+- `getMethodName()` Hook for method
+- `getMethodContext()` Context of method for which is hook
+- `callDirect()` Direct access to method (without any hooks)
+- `isAfter()` It tells if hook is after or before
+
+properties
+- `currentHookId` current idName of hook
+- `return` - return value (available for after hooks)
+
+Available only in before hooks, that can be potentially async methods (like insert/update/remote method)
+- `getCallback()` It returns callback function if exists
+- `setCallback()` It sets new callback for async method
+
+#### Useful helpers in UniUtils (in package: universe:utilities)
+
+- `UniUtils.getFieldsFromUpdateModifier(modifier)`  
+Gets array of top-level fields, which will be changed by modifier (this from update method)
+- `UniUtils.getPreviewOfDocumentAfterUpdate(updateModifier, oldDoc = {}) `
+Gets simulation of new version of document passed as a second argument
+
+### Direct call without hooks
+All direct method for collection are available in `collection.direct`
+For documents in `collection.direct.doc`.
+In context of hook handler is `this.call Direct()`, which gives possibility of circumventing hooks to method, 
+for which is current hook.
+
+### Arguments passed to hook
+Hook handler has the same parameter as are passed for method.
+Only callbacks passed as last argument are provided by this.getCallback() instead of be in arguments.
+
+```
+collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier, options){
+   console.log('argumentsLogger', selector, modifier, options).
+});
+```
+
+## Mixins
+ *under active development*
+ 
+### Mounting
+ To add some mixin to collection, just create new instance of mixin class 
+ and pass them to as a item of array, under key mixins in options of UniCollection constructor.
+```
+myColl = new UniCollection('myColl', {
+    mixins: [
+        new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
+        new UniCollection.mixins.PublishAccessMixin(),
+        new UniCollection.mixins.ShowErrorMixin()
+    ],
+});
+```
+As you can see some of mixins can have own options, that can be passed to constructor.
+*Details of this options you can find in documentation of proper mixin.*
+
+### Creating own mixin
+There are two ways.
+One of them is just simple using inheritance by es6 from abstract class `UniCollection.AbstractMixin`
+
+```
+class MyNewMixin extends UniCollection.AbstractMixin {
+
+    constructor({name = 'MyNewMixin', ...params} = {}) {
+        super(name);
+    }
+
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+}
+```
+
+But if you don't use es6 or you want different, there is another way (using of UniCollection.createMixinClass)
+
+```
+var MyNewMixin = UniCollection.createMixinClass({
+    name: 'MyNewMixin',
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+});
+```
+
+Collection when attaches a mixin to self, 
+it launches method mount on mixin where pass self as a first argument and self options as a second one. 
 
 ### EJSONable document types
 
@@ -525,12 +615,9 @@ allowing your type in Session variables, ReactiveDict and other places.
     (which is an id of current document)
 
 
-
 - `remove(options, cb)`
 
     Performs remove on current document
-
-
 
 - `save(options, cb)`
 
@@ -594,26 +681,6 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
    (on client side you must have this doc in minimongo [subscription needed])
 
 
-- `UniUsers.setNewPermissionType(permissionName, description`
-
-   Add new permission type (Must be called on both sides client&server)
-
-   Each permission adds to user prototype new method like `user.getPermission<PermissionName>()`
-
-   **example:** `getPermissionModerator`
-
-   which is an helper to checking current permission state
-
-
--  `UniUsers.availablePermissions()`
-
-    Returns: on client an object of key/value pairs, like:  {permissionName: templateNameOfField, ....}
-    on server side: {permissionName: true, ....},
-
-Setting new permission for user you can set only on server side, by method on universe user
-
-`user.setPermission(name, value)`
-
 ## Documents methods on user object
 
 -    `getName()` returns profile.name of user
@@ -629,7 +696,6 @@ Setting new permission for user you can set only on server side, by method on un
 
 ## Additional extensions for this package:
 
-- [Universe Access & Mappings](https://atmospherejs.com/vazco/universe-access)
 - [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document) 
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
