@@ -1,16 +1,43 @@
 'use strict';
-
+/**
+ * BackupMixin adds backup to collection
+ *
+ * @example:
+ * collection = new UniCollection('collection', {
+ *     mixins: [
+ *         new UniCollection.mixins.BackupMixin({
+ *             name: 'Backup', // backup collecton suffix,
+ *             expireAfter: false, // expire time of backup in seconds
+ *
+ *             backupOnRemove:  true, // if true, creates backup on remove
+ *             removeOnRestore: true, // if true, removes backup on restore
+ *             upsertOnRestore: false // if true, upserts backup on restore, inserts otherwise
+ *         })
+ *     ]
+ * });
+ *
+ * collection.insert({number: 1});
+ * collection.insert({number: 2});
+ * collection.insert({number: 3});
+ *
+ * collection.find().count(); // 3
+ * collection.remove();       // all documents are copied to collection.backupCollection
+ * collection.find().count(); // 0
+ * collection.restore();      // all documents are copied to collection
+ * collection.find().count(); // 3
+ */
 class BackupMixin extends UniCollection.AbstractMixin {
     constructor ({
+        name = 'Backup',
         expireAfter = false,
 
-        name = 'Backup',
         backupOnRemove  = true,
         removeOnRestore = true,
         upsertOnRestore = false
     } = {}) {
         super(name);
 
+        this.name = name;
         this.expireAfter = expireAfter;
 
         this.backupOnRemove  = backupOnRemove;
@@ -19,17 +46,23 @@ class BackupMixin extends UniCollection.AbstractMixin {
     }
 
     mount (collection) {
-        collection.backupCollection = new UniCollection(collection.getCollectionName() + 'Backup');
+        collection.backupCollection = new UniCollection(collection.getCollectionName() + this.name);
         collection.backupCollection.create = collection.create.bind(collection);
         collection.backupCollection._validators = collection._validators;
         collection.backupCollection._universeValidators = collection._universeValidators;
 
-        if (Meteor.isServer && this.expireAfter) {
-            collection.backupCollection._ensureIndex({
-                _backupAt: 1
-            }, {
-                expireAfterSeconds: this.expireAfter
-            });
+        if (Meteor.isServer) {
+            if (this.expireAfter) {
+                collection.backupCollection.ensureMongoIndex('backup', {
+                    _backupDate: true
+                }, {
+                    expireAfterSeconds: this.expireAfter
+                });
+            } else {
+                collection.backupCollection._dropIndex({
+                    _backupDate: true
+                });
+            }
         }
 
         collection.methods({
@@ -44,11 +77,11 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
         collection.docHelpers({
             backup: function () {
-                collection.call('backup', this._id);
+                collection.backup(this._id);
             },
 
             restore: function (options = {}) {
-                collection.call('restore', this._id, options);
+                collection.restore(this._id, options);
             }
         });
 
@@ -60,15 +93,20 @@ class BackupMixin extends UniCollection.AbstractMixin {
             collection.call('restore', selector, options);
         };
 
-        collection.onBeforeCall('remove', 'backup', (...args) => this.softRemove(collection, ...args));
+        collection.onBeforeCall('remove', 'backup', (id) => {
+            if (this.backupOnRemove) {
+                collection.backup(id);
+            }
+        });
     }
 
     backup (collection, selector = {}) {
         collection.find(selector).forEach((document) => {
-            let jValue = document.toJSONValue();
+            const object = document.toJSONValue();
+
             collection.backupCollection.upsert(document._id, {
-                ...jValue,
-                _backupAt: new Date()
+                ...object,
+                _backupDate: new Date()
             });
         });
     }
@@ -77,9 +115,12 @@ class BackupMixin extends UniCollection.AbstractMixin {
         removeOnRestore = this.removeOnRestore,
         upsertOnRestore = this.upsertOnRestore
     } = {}) {
-        collection.backupCollection.find(selector).forEach(document => {
+        collection.backupCollection.find(selector, {
+            fields: {
+                _backupDate: false
+            }
+        }).forEach((document) => {
             var object = document.toJSONValue();
-            delete object._backupAt;
 
             if (upsertOnRestore) {
                 collection.upsert(object._id, object);
@@ -91,12 +132,6 @@ class BackupMixin extends UniCollection.AbstractMixin {
                 document.remove();
             }
         });
-    }
-
-    softRemove (collection, id) {
-        if (this.backupOnRemove) {
-            collection.backup(id);
-        }
     }
 }
 
