@@ -25,9 +25,8 @@ Another good thing is that, UniCollection works with package matb33:collection-h
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents** 
 
-- [Universe Collection](#universe-collection)
   - [Installation](#installation)
     - [How to use](#how-to-use)
       - [Creating collection](#creating-collection)
@@ -37,18 +36,28 @@ Another good thing is that, UniCollection works with package matb33:collection-h
     - [Additional schemas for a Collection](#additional-schemas-for-a-collection)
     - [Passing Options](#passing-options)
     - [Additional SimpleSchema Options](#additional-simpleschema-options)
-      - [denyInsert and denyUpdate](#denyinsert-and-denyupdate)
   - [Remote methods](#remote-methods)
     - [Remote methods on collection](#remote-methods-on-collection)
     - [Remote methods on document](#remote-methods-on-document)
   - [Documents Methods](#documents-methods)
     - [Simple way:](#simple-way)
     - [By Inheritance:](#by-inheritance)
-    - [Example use within a template](#example-use-within-a-template)
+    - [Example use within a blaze template](#example-use-within-a-blaze-template)
+  - [Hooks](#hooks)
+    - [Context in hook](#context-in-hook)
+      - [Shared context](#shared-context)
+      - [Stuff in context](#stuff-in-context)
+      - [Useful helpers in UniUtils](#useful-helpers-in-uniutils-in-package-universeutilities)
+    - [Direct call without hooks](#direct-call-without-hooks)
+    - [Arguments passed to hook](#arguments-passed-to-hook)
+  - [Mixins](#mixins)
+    - [Mounting](#mounting)
+    - [Creating own mixin](#creating-own-mixin)
     - [EJSONable document types](#ejsonable-document-types)
   - [Default methods on UniCollection.UniDoc](#default-methods-on-unicollectionunidoc)
       - [(They are default on each universe document)](#they-are-default-on-each-universe-document)
 - [UniUsers](#uniusers)
+        - [( replacement of Meteor.users )](#-replacement-of-meteorusers-)
     - [Methods on UniUsers](#methods-on-uniusers)
   - [Documents methods on user object](#documents-methods-on-user-object)
   - [Additional extensions for this package:](#additional-extensions-for-this-package)
@@ -466,55 +475,6 @@ with the corresponding template:
 </template>
 ```
 
-## Mixins
- *under active development*
- 
-### Mounting
- To add some mixin to collection, just create new instance of mixin class 
- and pass them to as a item of array, under key mixins in options of UniCollection constructor.
-```
-myColl = new UniCollection('myColl', {
-    mixins: [
-        new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
-        new UniCollection.mixins.PublishAccessMixin(),
-        new UniCollection.mixins.ShowErrorMixin()
-    ],
-});
-```
-As you can see some of mixins can have own options, that can be passed to constructor.
-*Details of this options you can find in documentation of proper mixin.*
-
-### Creating own mixin
-There are two ways.
-One of them is just simple using inheritance by es6 from abstract class `UniCollection.AbstractMixin`
-
-```
-class MyNewMixin extends UniCollection.AbstractMixin {
-
-    constructor({name = 'MyNewMixin', ...params} = {}) {
-        super(name);
-    }
-
-    mount(collection, options = {}) {
-        // do something on mount to collection
-    }
-}
-```
-
-But if you don't use es6 or you want different, there is another way (using of UniCollection.createMixinClass)
-
-```
-var MyNewMixin = UniCollection.createMixinClass({
-    name: 'MyNewMixin',
-    mount(collection, options = {}) {
-        // do something on mount to collection
-    }
-});
-```
-
-Collection when attaches a mixin to self, 
-it launches method mount on mixin where pass self as a first argument and self options as a second one. 
-
 ## Hooks 
 sync hooks: 'find','findOne','setSchema','create'
 with async support: 'insert','update','remove', 'upsert'
@@ -580,6 +540,55 @@ collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier
    console.log('argumentsLogger', selector, modifier, options).
 });
 ```
+
+## Mixins
+ *under active development*
+ 
+### Mounting
+ To add some mixin to collection, just create new instance of mixin class 
+ and pass them to as a item of array, under key mixins in options of UniCollection constructor.
+```
+myColl = new UniCollection('myColl', {
+    mixins: [
+        new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
+        new UniCollection.mixins.PublishAccessMixin(),
+        new UniCollection.mixins.ShowErrorMixin()
+    ],
+});
+```
+As you can see some of mixins can have own options, that can be passed to constructor.
+*Details of this options you can find in documentation of proper mixin.*
+
+### Creating own mixin
+There are two ways.
+One of them is just simple using inheritance by es6 from abstract class `UniCollection.AbstractMixin`
+
+```
+class MyNewMixin extends UniCollection.AbstractMixin {
+
+    constructor({name = 'MyNewMixin', ...params} = {}) {
+        super(name);
+    }
+
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+}
+```
+
+But if you don't use es6 or you want different, there is another way (using of UniCollection.createMixinClass)
+
+```
+var MyNewMixin = UniCollection.createMixinClass({
+    name: 'MyNewMixin',
+    mount(collection, options = {}) {
+        // do something on mount to collection
+    }
+});
+```
+
+Collection when attaches a mixin to self, 
+it launches method mount on mixin where pass self as a first argument and self options as a second one. 
 
 ### EJSONable document types
 
