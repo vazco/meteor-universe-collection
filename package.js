@@ -36,7 +36,7 @@ Package.onUse(function (api) {
         'lib/UniHooks.js'
     ]);
 
-    api.addFiles('lib/UniPublish.js', 'server');
+    api.addFiles(['lib/UniPublish.js', 'lib/UniMongoIndexes.js'], 'server');
 
     api.addFiles([
         'mixins/AbstractMixin.js',
