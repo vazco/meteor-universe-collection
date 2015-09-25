@@ -52,6 +52,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
         collection.backupCollection._universeValidators = collection._universeValidators;
 
         if (Meteor.isServer) {
+            console.log(this.expireAfter, !!this.expireAfter);
             if (this.expireAfter) {
                 collection.backupCollection.ensureMongoIndex('backup', {
                     _backupDate: true
@@ -59,9 +60,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
                     expireAfterSeconds: this.expireAfter
                 });
             } else {
-                collection.backupCollection._dropIndex({
-                    _backupDate: true
-                });
+                collection.backupCollection._dropIndex('backup');
             }
         }
 
