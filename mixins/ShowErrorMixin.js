@@ -41,14 +41,8 @@ class ShowErrorMixin extends UniCollection.AbstractMixin {
         if (_.isObject(text)) {
             text = text.reason || text.message;
         }
-        var uiShowErr;
-        if (typeof UniUI === 'object') {
-            uiShowErr = UniUI.setErrorMessage;
-        } else if (UniUtils.setErrorMessage) {
-            uiShowErr = UniUtils.setErrorMessage;
-        }
-        if (uiShowErr) {
-            uiShowErr('header', text);
+        if (typeof UniUI === 'object' && UniUI.setErrorMessage) {
+            UniUI.setErrorMessage('header', text);
         } else {
             alert(text);
         }
