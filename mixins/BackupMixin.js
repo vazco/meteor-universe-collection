@@ -6,7 +6,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
         backupOnRemove  = true,
         removeOnRestore = true,
-        updateOnRestore = false
+        upsertOnRestore = false
     } = {}) {
         super('BackupMixin');
 
@@ -14,7 +14,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
         this.backupOnRemove  = backupOnRemove;
         this.removeOnRestore = removeOnRestore;
-        this.updateOnRestore = updateOnRestore;
+        this.upsertOnRestore = upsertOnRestore;
     }
 
     mount (collection) {
@@ -73,13 +73,13 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
     restore (collection, selector = {}, {
         removeOnRestore = this.removeOnRestore,
-        updateOnRestore = this.updateOnRestore
+        upsertOnRestore = this.upsertOnRestore
     } = {}) {
         collection.backupCollection.find(selector).forEach(document => {
             var object = document.toJSONValue();
             delete object._backupAt;
 
-            if (updateOnRestore) {
+            if (upsertOnRestore) {
                 collection.upsert(object._id, object);
             } else {
                 collection.insert(object);
