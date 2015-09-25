@@ -1,7 +1,7 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
 ## Under active development
-This is version alpha if you want use it in production please use stable version
+This is version 2.0.0-beta if you want use it in production please use stable version
 under [this link](https://atmospherejs.com/vazco/universe-collection)
 
 # Universe Collection
