@@ -53,13 +53,13 @@ class BackupMixin extends UniCollection.AbstractMixin {
 
         if (Meteor.isServer) {
             if (this.expireAfter) {
-                collection.backupCollection.ensureMongoIndex('backup', {
+                collection.backupCollection.ensureMongoIndex('_backupDate', {
                     _backupDate: true
                 }, {
                     expireAfterSeconds: this.expireAfter
                 });
             } else {
-                collection.backupCollection._dropIndex('backup');
+                collection.backupCollection._dropIndex('_backupDate');
             }
         }
 
