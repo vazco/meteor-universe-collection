@@ -615,12 +615,9 @@ allowing your type in Session variables, ReactiveDict and other places.
     (which is an id of current document)
 
 
-
 - `remove(options, cb)`
 
     Performs remove on current document
-
-
 
 - `save(options, cb)`
 
@@ -683,26 +680,6 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 
    (on client side you must have this doc in minimongo [subscription needed])
 
-
-- `UniUsers.setNewPermissionType(permissionName, description`
-
-   Add new permission type (Must be called on both sides client&server)
-
-   Each permission adds to user prototype new method like `user.getPermission<PermissionName>()`
-
-   **example:** `getPermissionModerator`
-
-   which is an helper to checking current permission state
-
-
--  `UniUsers.availablePermissions()`
-
-    Returns: on client an object of key/value pairs, like:  {permissionName: templateNameOfField, ....}
-    on server side: {permissionName: true, ....},
-
-Setting new permission for user you can set only on server side, by method on universe user
-
-`user.setPermission(name, value)`
 
 ## Documents methods on user object
 
