@@ -473,7 +473,7 @@ with the corresponding template:
 ```
 
 ## Hooks
-sync hooks: 'find','findOne','setSchema','create'
+sync hooks: 'find','findOne','setSchema','create' 
 with async support: 'insert','update','remove', 'upsert'
 hooks can be added for all remote methods on collection and documents
 
@@ -511,7 +511,7 @@ properties
 - `currentHookId` current idName of hook
 - `return` - return value (available for after hooks)
 
-Available only in before hooks, that can be potentially async methods (like insert/update/remote method)
+Available only in before hooks, that can be potentially async methods (like insert/update/remove)
 - `getCallback()` It returns callback function if exists
 - `setCallback()` It sets new callback for async method
 
@@ -539,7 +539,7 @@ collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier
 ```
 
 ## Mixins
- *under active development*
+Simple way to extend your collection in new features.
 
 ### Mounting
  To add some mixin to collection, just create new instance of mixin class

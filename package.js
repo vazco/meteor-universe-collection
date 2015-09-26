@@ -50,3 +50,12 @@ Package.onUse(function (api) {
         'UniUsers'
     ]);
 });
+
+Package.onTest(function (api) {
+    api.use(['meteor', 'mongo','minimongo','tinytest', 'underscore', 'test-helpers', 'universe:utilities@2.0.4',
+        'ejson', 'random', 'ddp', 'base64', 'ecmascript', 'check', 'universe:collection']);
+    api.addFiles('tests/livedata_tests.js', ['client', 'server']);
+    api.addFiles('tests/schema_tests.js', ['client', 'server']);
+    api.addFiles('tests/methods_tests.js', ['client', 'server']);
+    api.addFiles('tests/mhooks_tests.js', ['client', 'server']);
+});
