@@ -693,8 +693,6 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 -    `isAdmin()` checks if user has flag is_admin === true
      (You can override this method in `UniUsers.UniUser` and checks something else)
 
--    `setPermission(name, value)` sets permission on current user (is available on server)
-
 ## Additional extensions for this package:
 
 - [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
