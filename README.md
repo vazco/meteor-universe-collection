@@ -547,7 +547,7 @@ Simple way to extend your collection in new features.
 ```
 myColl = new UniCollection('myColl', {
     mixins: [
-        // example at unicollection.backup.meteor.com
+        // example at unicollection.backupmixin.meteor.com
         new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
         new UniCollection.mixins.PublishAccessMixin(),
         new UniCollection.mixins.ShowErrorMixin()
