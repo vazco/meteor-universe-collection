@@ -51,6 +51,9 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
     - [Arguments passed to hook](#arguments-passed-to-hook)
   - [Mixins](#mixins)
     - [Mounting](#mounting)
+    - [BackupMixin](#backupmixin)
+      - [Options](#options)
+      - [API](#api)
     - [Creating own mixin](#creating-own-mixin)
     - [EJSONable document types](#ejsonable-document-types)
   - [Default methods on UniCollection.UniDoc](#default-methods-on-unicollectionunidoc)
@@ -473,7 +476,7 @@ with the corresponding template:
 ```
 
 ## Hooks
-sync hooks: 'find','findOne','setSchema','create' 
+sync hooks: 'find','findOne','setSchema','create'
 with async support: 'insert','update','remove', 'upsert'
 hooks can be added for all remote methods on collection and documents
 
@@ -547,7 +550,6 @@ Simple way to extend your collection in new features.
 ```
 myColl = new UniCollection('myColl', {
     mixins: [
-        // example at unicollection.backupmixin.meteor.com
         new UniCollection.mixins.BackupMixin({expireAfter: 86400}),
         new UniCollection.mixins.PublishAccessMixin(),
         new UniCollection.mixins.ShowErrorMixin()
@@ -555,7 +557,48 @@ myColl = new UniCollection('myColl', {
 });
 ```
 As you can see some of mixins can have own options, that can be passed to constructor.
-*Details of this options you can find in documentation of proper mixin.*
+
+### BackupMixin
+This mixin provides backup functionality to your collection. Backup is stored in
+`collection.backupCollection`. By default, it is fully automatic,
+so when any document is removed, you can easily restore it. Example is available
+[here](http://unicollection.backupmixin.meteor.com/).
+
+Mixin provides also support for [TTL indexes](http://docs.mongodb.org/manual/core/index-ttl/), so
+backup can be automatically removed - set `expireAfter` to desired time (in seconds).
+
+#### Options
+
+  - `name`, default `'Backup'` - backup collection suffix
+  - `expireAfter`, default `false` - time to expire (in seconds) - `false` mean no expiration
+  - `backupOnRemove`, default `true` - if true, performs `.backup()` before remove
+  - `removeOnRestore`, default `true` - if true, removes data from backup after `.restore()`
+  - `upsertOnRestore`, default `false` - if true, `.restore()` performs `.upsert()`, `.insert()` otherwise
+
+#### API
+
+  - `collection.backup([selector])` copies docs to `collection.backupCollection`
+  - `collection.restore([selector], [options])` copies docs back from `collection.backupCollection`
+
+#### Example
+
+```js
+collection = new UniCollection('collection', {
+    mixins: [
+        new UniCollection.mixins.BackupMixin()
+    ]
+});
+
+collection.insert({number: 1});
+collection.insert({number: 2});
+collection.insert({number: 3});
+
+collection.find().count(); // 3
+collection.remove();       // all documents are copied to collection.backupCollection
+collection.find().count(); // 0
+collection.restore();      // all documents are copied to collection
+collection.find().count(); // 3
+```
 
 ### Creating own mixin
 There are two ways.
