@@ -629,6 +629,22 @@ Return true if this should be allowed.
 WARNING: This rule will be respected only by 'UniCollection.publish',
 Meteor.publish is expected to do their own access to checking instead relying on allow and deny.
 
+#### ShowErrorMixin
+Gets errors (if are) from insert, update, upsert, remove
+and passing them to show error function
+
+```
+new ShowErrorMixin(params={})
+params:
+      name - name of mixin
+      errorDisplayer - function that will be responsible as a showing the error message,
+      like e.g. showError(exceptionOrString) // if function is not declared, as a default it will try use UniUI.setErrorMessage, if missing fallback to alert() 
+      addForMethods: //Adds only for this one
+          insert: true, upsert: true, update: true, remove: true
+          (as a value can be passed a custome function of errorDisplayer)
+ ```
+
+
 ### Creating own mixin
 There are two ways.
 One of them is just simple using inheritance by es6 from abstract class `UniCollection.AbstractMixin`
