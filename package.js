@@ -1,7 +1,7 @@
 'use strict';
 
 Package.describe({
-    summary: 'Collections with helpers on document, prototyping own classes of doc. Users with helpers. Saving doc',
+    summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
     version: '2.0.0',
     git: 'https://github.com/vazco/meteor-universe-collection'
