@@ -60,7 +60,6 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
     - [Creating own mixin](#creating-own-mixin)
     - [EJSONable document types](#ejsonable-document-types)
   - [Default methods on UniCollection.UniDoc](#default-methods-on-unicollectionunidoc)
-      - [(They are default on each universe document)](#they-are-default-on-each-universe-document)
   - [UniUsers](#uniusers)
     - [Methods on UniUsers](#methods-on-uniusers)
   - [Documents methods on user object](#documents-methods-on-user-object)
