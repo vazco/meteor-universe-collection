@@ -880,7 +880,7 @@ UniCollection.publish('example', function() {
     return Colls.MyColl.find();
 });
 ```
-### accessability for users
+### Accessibility for users
 
 #### users only
 ```
