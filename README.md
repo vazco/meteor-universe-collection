@@ -557,8 +557,8 @@ myColl = new UniCollection('myColl', {
 });
 ```
 As you can see some of mixins can have own options, that can be passed to constructor.
-
-### BackupMixin
+### Attached mixins in this package
+#### BackupMixin
 This mixin provides backup functionality to your collection. Backup is stored in
 `collection.backupCollection`. By default, it is fully automatic,
 so when any document is removed, you can easily restore it. Example is available
@@ -567,7 +567,7 @@ so when any document is removed, you can easily restore it. Example is available
 Mixin provides also support for [TTL indexes](http://docs.mongodb.org/manual/core/index-ttl/), so
 backup can be automatically removed - set `expireAfter` to desired time (in seconds).
 
-#### Options
+##### Options
 
   - `name`, default `'Backup'` - backup collection suffix
   - `expireAfter`, default `false` - time to expire (in seconds) - `false` mean no expiration
@@ -575,12 +575,12 @@ backup can be automatically removed - set `expireAfter` to desired time (in seco
   - `removeOnRestore`, default `true` - if true, removes data from backup after `.restore()`
   - `upsertOnRestore`, default `false` - if true, `.restore()` performs `.upsert()`, `.insert()` otherwise
 
-#### API
+##### API
 
   - `collection.backup([selector])` copies docs to `collection.backupCollection`
   - `collection.restore([selector], [options])` copies docs back from `collection.backupCollection`
 
-#### Example
+##### Example
 
 ```js
 collection = new UniCollection('collection', {
@@ -599,6 +599,35 @@ collection.find().count(); // 0
 collection.restore();      // all documents are copied to collection
 collection.find().count(); // 3
 ```
+#### PublishAccessMixin
+PublishAccessMixin adds access control to UniCollection.publish
+This works like insert or update, to collection.allow and collection.deny will be added new validator named "publish"
+
+##### Example
+
+```
+ collection.allow({
+       publish: function(userId, doc, publicationName){
+           return true;
+      }
+  });
+ 
+  collection.deny({
+       publish: function(userId, doc, publicationName){
+           return doc.ownerId !== userId;
+       }
+  });
+```
+
+##### Parameters
+
+- {string} `userId` The user 'userId' wants to subscribe document 'doc' from this collection.
+- {object} `doc` document that might be published
+- {string} `publicationName` name of publication if is available.
+
+Return true if this should be allowed.
+WARNING: This rule will be respected only by 'UniCollection.publish',
+Meteor.publish is expected to do their own access to checking instead relying on allow and deny.
 
 ### Creating own mixin
 There are two ways.
