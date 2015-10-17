@@ -5,7 +5,7 @@ This is version 2.0.0-rc2 if you want use it in production please use stable ver
 under [this link](https://atmospherejs.com/vazco/universe-collection)
 
 # Universe Collection
-##### ( replacement of Mongo.Collection ) #####
+##### ( extension of Mongo.Collection ) #####
 Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
 
@@ -683,7 +683,7 @@ allowing your type in Session variables, ReactiveDict and other places.
     returns collection to which current document belongs.
 
 # UniUsers
-##### ( replacement of Meteor.users ) #####
+##### ( extension of Meteor.users ) #####
 
 Universe provides UniUsers object which is a copy of Meteor.users collection object that shares the same document with.
 Meteor.users collection stay unmodiefied. Both operates on the same documents, only methods to access objects have changed.
