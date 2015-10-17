@@ -781,9 +781,123 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 -    `isAdmin()` checks if user has flag is_admin === true
      (You can override this method in `UniUsers.UniUser` and checks something else)
 
-## Additional extensions for this package:
+## Publications (UniCollection.Publish)
+Of course this package works great with standard meteor publication mechanism.
+But if you want something more, this package provides additional mechanism for it.
+UniCollection.published works just like Meteor.publish but has a few additional stuff.
+- Simple mappings of relations or possibility of access control (by mixin)
+- Another benefit is that UniCollection.publish can be dynamically changed (redeclared)
+- Possibility of setting by options accessibility like: publication is only for users or only for admins. 
+No more checking `if(!this.userId){ this.ready(); return;}`
 
-- [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
+### Simple way
+
+```
+UniCollection.publish('example', function() {
+    return [Colls.MyColl.find(), Colls.Books.find()];
+});
+```
+You can return one Collection.Cursor, an array of Collection.Cursors.
+If a publish function does not return a cursor or array of cursors,
+it is assumed to be using the low-level added/changed/removed interface, and it must also call ready once the initial record set is complete.
+
+### Parameters
+- `name` Name of the record set.
+If null, the set has no name, and the record set is automatically sent to all connected clients
+(if you use mixin "PublishAccessMixin" then with access control)
+- `handler` {Function} Function called on the server each time a client subscribes.
+Inside the function, this is the publish handler object, described below.
+If the client passed arguments to subscribe, the function is called with the same arguments.
+#### options {Object}
+- `override` {boolean} resets handler for publication name. (only named publication can be overridden)
+- `userOnly` {boolean} publication will be available only for users
+- `adminOnly` {boolean} publication will be available only for admins
+
+### Low-level publish api
+
+```
+UniCollection.publish('example', function() {
+    var self = this;
+    var handle = Colls.Books.find({roomId: roomId}).observeChanges({
+        added: function (id, fields) {
+            self.added("books", id, fields);
+        },
+        changed: function (id, fields, allowedFields) {
+            self.changed("books", id, fields);
+        },
+        removed: function (id, fields) {
+            self.removed("books", id);
+        }
+    });
+    self.onStop(function () {
+        handle.stop();
+    });
+});
+```
+- `allowedFields` Dictionary of fields possible return or exclude from it. ( They should be the same as was passed to options.fields in find() method. ) You can get allowed/excluded fields directly from cursor:
+Server side:
+var allowedFields = cursor._cursorDescription.options.fields
+
+### Using with build-in mappings
+
+This package provides simple way mapping mechanism.
+You must return base collection or collections and using method setMappings, define relational mappings
+
+```
+UniCollection.publish('example', function() {
+    this.setMappings(Colls.MyColl, [
+        //Map a value of organisationsIds from selected documents of Colls.MyColl to document from Colls.Rooms
+        {
+            key: 'organisationsIds',
+            collection: Colls.Rooms
+        },
+        //Map ids of selected document of Colls.MyColl to document from Meteor.users where orgIds = id
+        {
+                    key: 'orgIds',
+                    collection: Meteor.users,
+                    reverse: true // reverse direction of the relationship (inverse relationship is more complex)
+        }
+     ]);
+    //For mapped users you can map another documents
+    this.setMappings(Meteor.users, [
+            {
+                key: 'organisationsIds',
+                collection: Colls.Rooms,
+                reverse: true
+
+            }
+    ]);
+    //And another....
+    this.setMappings(Colls.Rooms, [
+        {
+            key: 'roomId',
+            reverse:true,
+            collection: Colls.Documents,
+            options: {fields: { title: 1 }}
+        }
+    ]);
+
+    return Colls.MyColl.find();
+});
+```
+### accessability for users
+
+#### users only
+```
+UniCollection.publish('example', function() {
+    return Colls.Books.find();
+}, {userOnly:true});
+```
+
+#### admins only
+```
+UniCollection.publish('example', function() {
+    return Colls.Books.find();
+}, {adminOnly:true});
+```
+
+## Additional extensions for this package
+
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
 
