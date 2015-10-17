@@ -1,9 +1,5 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
-## Under active development
-This is version 2.0.0-rc2 if you want use it in production please use stable version
-under [this link](https://atmospherejs.com/vazco/universe-collection)
-
 # Universe Collection
 ##### ( extension of Mongo.Collection ) #####
 Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
@@ -844,7 +840,7 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 -    `isAdmin()` checks if user has flag is_admin === true
      (You can override this method in `UniUsers.UniUser` and checks something else)
 
-## Publications (UniCollection.Publish)
+# Publications (UniCollection.Publish)
 Of course this package works great with standard meteor publication mechanism.
 But if you want something more, this package provides additional mechanism for it.
 UniCollection.published works just like Meteor.publish but has a few additional stuff.
@@ -853,7 +849,7 @@ UniCollection.published works just like Meteor.publish but has a few additional 
 - Possibility of setting by options accessibility like: publication is only for users or only for admins. 
 No more checking `if(!this.userId){ this.ready(); return;}`
 
-### Simple way
+## Simple way
 
 ```
 UniCollection.publish('example', function() {
@@ -864,19 +860,19 @@ You can return one Collection.Cursor, an array of Collection.Cursors.
 If a publish function does not return a cursor or array of cursors,
 it is assumed to be using the low-level added/changed/removed interface, and it must also call ready once the initial record set is complete.
 
-### Parameters
+## Parameters
 - `name` Name of the record set.
 If null, the set has no name, and the record set is automatically sent to all connected clients
 (if you use mixin "PublishAccessMixin" then with access control)
 - `handler` {Function} Function called on the server each time a client subscribes.
 Inside the function, this is the publish handler object, described below.
 If the client passed arguments to subscribe, the function is called with the same arguments.
-#### options {Object}
+### options {Object}
 - `override` {boolean} resets handler for publication name. (only named publication can be overridden)
 - `userOnly` {boolean} publication will be available only for users
 - `adminOnly` {boolean} publication will be available only for admins
 
-### Low-level publish api
+## Low-level publish api
 
 ```
 UniCollection.publish('example', function() {
@@ -901,7 +897,7 @@ UniCollection.publish('example', function() {
 Server side:
 var allowedFields = cursor._cursorDescription.options.fields
 
-### Using with build-in mappings
+## Using with build-in mappings
 
 This package provides simple way mapping mechanism.
 You must return base collection or collections and using method setMappings, define relational mappings
@@ -943,23 +939,23 @@ UniCollection.publish('example', function() {
     return Colls.MyColl.find();
 });
 ```
-### Accessibility for users
+## Accessibility for users
 
-#### users only
+### users only
 ```
 UniCollection.publish('example', function() {
     return Colls.Books.find();
 }, {userOnly:true});
 ```
 
-#### admins only
+### admins only
 ```
 UniCollection.publish('example', function() {
     return Colls.Books.find();
 }, {adminOnly:true});
 ```
 
-## Support for Universe modules
+# Support for Universe modules
 
 ```
 import {UniCollection, UniUsers, UniDoc, UniUser, BackupMixin, PublishAccessMixin} from '{universe:collection}';
