@@ -91,14 +91,14 @@ If you want create a local collection please pass in options property: `connecti
 ### Methods on collection object
 - `setDocumentPrototype(transformationObject)`
 
-    Sets transformation function for collection.
+Sets transformation function for collection.
 
-    Function passed as an argument will be executed for each document
+Function passed as an argument will be executed for each document
 
-    to transform selected documents before the method (like: find, findOne) returns them.
+to transform selected documents before the method (like: find, findOne) returns them.
 
-    UniDoc is a default of document prototype.
-    (You can also pass it in collection constructor in options as a key 'documentPrototype')
+UniDoc is a default of document prototype.
+(You can also pass it in collection constructor in options as a key 'documentPrototype')
 
 
 ```js
@@ -119,13 +119,13 @@ If you want create a local collection please pass in options property: `connecti
 
 - `docHelpers(objectWithMethods)`
 
-       Using this method you can add new helpers function into document prototype.
+Using this method you can add new helpers function into document prototype.
 
-       It's alternative way to setDocumentPrototype.
+It's alternative way to setDocumentPrototype.
 
-       All of this methods will be added to returned document by function find, findOne.
+All of this methods will be added to returned document by function find, findOne.
 
-       Documents helpers did not depend from transformationObject.
+Documents helpers did not depend from transformationObject.
 
 ```js
     var collection = new UniCollection('some');
@@ -160,24 +160,23 @@ You can pass a raw object of document and save it after or save it in the moment
   var docInstance3 = collection.create({title: 'abcde'}, {save: true, useSchema: 'schemaName'});
 ```
 - `methods`
-    Remote methods on collection that can be invoked over the network by clients from collection instance.
-    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
-    Additionally, handler will be have in context a collection object under this.collection.
-     Rest things like userId, connection are same as handlers in Meteor.methods have.
+Remote methods on collection that can be invoked over the network by clients from collection instance.
+From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
+Additionally, handler will be have in context a collection object under this.collection.
+Rest things like userId, connection are same as handlers in Meteor.methods have.
 
 - `docMethods`
-    Remote methods on document that can be invoked over the network by clients from document instance.
+Remote methods on document that can be invoked over the network by clients from document instance.
 
 
 - `hasDocument(docOrId)`
 
-    Checks if document belongs to this collection
+Checks if document belongs to this collection
 
 - `setDefaultSort(options)`
 
-    Adds default sort options to find,
-
-    but default sort option are used only when someone call find without sort options
+Adds default sort options to find,
+but default sort option are used only when someone call find without sort options
 
 ```js
     Colls.Books.setDefaultSort({ title: 1 })
@@ -185,36 +184,54 @@ You can pass a raw object of document and save it after or save it in the moment
 
 - `ensureUniDoc(docOrId, pattern=this.matchingDocument(), errorMessage=)`
 
-    Ensures that returned document is matched against pattern.
+Ensures that returned document is matched against pattern.
 
-    It accepts document but also id of existing document.
+It accepts document but also id of existing document.
 
-    If the match fails, ensureUniDoc throws a Match.Error
+If the match fails, ensureUniDoc throws a Match.Error
 
-    but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
+but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
 
 ```js
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
-   As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
+As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
-   but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
+but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
 
-   And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
 
 
 - `matchingDocument(keysPatterns=)`
 
-    Pattern argument to checking functions like: this.ensureUniDoc(), check() and Match.test()
+Pattern argument to checking functions like: this.ensureUniDoc(), check() and Match.test()
 
-    Basic pattern checks document type if type is equal to current constructor of documents in this collection.
+Basic pattern checks document type if type is equal to current constructor of documents in this collection.
 
-    Additionally you can precise patterns for fields of document, using keysPatterns
+Additionally you can precise patterns for fields of document, using keysPatterns
 
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
+    // or 
+    Match.test(Colls.Books.matchingDocument({title: String}));
+    // or
+    check(doc, Colls.Books.matchingDocument());
 ```
+
+- `ensureMongoIndex(indexName, keys, options = {})`
+Creates an index on the specified field if the index does not already exist.
+If universe detects,that index under name is changed,
+mechanism will drop the old index under name passed as first parameter to this function.
+ - Params
+  - {string} indexName Unique name of index for this collection
+  - {object} keys An Object that contains the field and value pairs where the field is the index key
+ and the value describes the type of index for that field.
+ For an ascending index on a field, specify a value of 1; for descending index, specify a value of -1.
+  - {object} options Optional. A document that contains a set of options that controls the creation of the index.
+
+- `dropMongoIndex(indexName)`
+Drops the specified index from a collection.
 
 ## Schemas
 
@@ -487,7 +504,34 @@ Removing unnecessary hooks
 - `offBeforeCall(hookName, idName)`
 - `offAfterCall(hookName, idName)`
 
-### Context in hook
+### Example
+
+```
+var col = new UniCollection('some');
+
+col.onBeforeCall('insert', 'myAwesomeInsert', function(doc){
+  console.log('will be inserted', doc, 'to collection:', this.getCollection());
+});
+
+col.onBeforeCall('update', 'myAwesomeUpdate', function(selector, modifier, options){
+  this.oldDoc = this.getCollection().findOne(selector);
+});
+
+col.onAfterCall('update', 'afterAwesomeUpdate', function(selector, modifier, options){
+  console.log('Old doc:', this.oldDoc, 'new doc:', this.getCollection().findOne(selector));
+});
+
+coll.insert({title: 'Awesome doc'});
+
+coll.update({title: 'Awesome doc'}, {$set: {title: 'Much more awesome doc'}});
+
+coll.offBeforeCall('insert', 'myAwesomeInsert');
+
+coll.insert({title: 'Awesome doc2'});
+
+```
+
+### Context of hook handler
 #### Shared context
 Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.
 
@@ -557,8 +601,8 @@ myColl = new UniCollection('myColl', {
 });
 ```
 As you can see some of mixins can have own options, that can be passed to constructor.
-
-### BackupMixin
+### Attached mixins in this package
+#### BackupMixin
 This mixin provides backup functionality to your collection. Backup is stored in
 `collection.backupCollection`. By default, it is fully automatic,
 so when any document is removed, you can easily restore it. Example is available
@@ -567,7 +611,7 @@ so when any document is removed, you can easily restore it. Example is available
 Mixin provides also support for [TTL indexes](http://docs.mongodb.org/manual/core/index-ttl/), so
 backup can be automatically removed - set `expireAfter` to desired time (in seconds).
 
-#### Options
+##### Options
 
   - `name`, default `'Backup'` - backup collection suffix
   - `expireAfter`, default `false` - time to expire (in seconds) - `false` mean no expiration
@@ -575,12 +619,12 @@ backup can be automatically removed - set `expireAfter` to desired time (in seco
   - `removeOnRestore`, default `true` - if true, removes data from backup after `.restore()`
   - `upsertOnRestore`, default `false` - if true, `.restore()` performs `.upsert()`, `.insert()` otherwise
 
-#### API
+##### API
 
   - `collection.backup([selector])` copies docs to `collection.backupCollection`
   - `collection.restore([selector], [options])` copies docs back from `collection.backupCollection`
 
-#### Example
+##### Example
 
 ```js
 collection = new UniCollection('collection', {
@@ -599,6 +643,51 @@ collection.find().count(); // 0
 collection.restore();      // all documents are copied to collection
 collection.find().count(); // 3
 ```
+#### PublishAccessMixin
+PublishAccessMixin adds access control to UniCollection.publish
+This works like insert or update, to collection.allow and collection.deny will be added new validator named "publish"
+
+##### Example
+
+```
+ collection.allow({
+       publish: function(userId, doc, publicationName){
+           return true;
+      }
+  });
+ 
+  collection.deny({
+       publish: function(userId, doc, publicationName){
+           return doc.ownerId !== userId;
+       }
+  });
+```
+
+##### Parameters
+
+- {string} `userId` The user 'userId' wants to subscribe document 'doc' from this collection.
+- {object} `doc` document that might be published
+- {string} `publicationName` name of publication if is available.
+
+Return true if this should be allowed.
+WARNING: This rule will be respected only by 'UniCollection.publish',
+Meteor.publish is expected to do their own access to checking instead relying on allow and deny.
+
+#### ShowErrorMixin
+Gets errors (if are) from insert, update, upsert, remove
+and passing them to show error function
+
+```
+new ShowErrorMixin(params={})
+params:
+      name - name of mixin
+      errorDisplayer - function that will be responsible as a showing the error message,
+      like e.g. showError(exceptionOrString) // if function is not declared, as a default it will try use UniUI.setErrorMessage, if missing fallback to alert() 
+      addForMethods: //Adds only for this one
+          insert: true, upsert: true, update: true, remove: true
+          (as a value can be passed a custome function of errorDisplayer)
+ ```
+
 
 ### Creating own mixin
 There are two ways.
@@ -736,9 +825,123 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
 -    `isAdmin()` checks if user has flag is_admin === true
      (You can override this method in `UniUsers.UniUser` and checks something else)
 
-## Additional extensions for this package:
+## Publications (UniCollection.Publish)
+Of course this package works great with standard meteor publication mechanism.
+But if you want something more, this package provides additional mechanism for it.
+UniCollection.published works just like Meteor.publish but has a few additional stuff.
+- Simple mappings of relations or possibility of access control (by mixin)
+- Another benefit is that UniCollection.publish can be dynamically changed (redeclared)
+- Possibility of setting by options accessibility like: publication is only for users or only for admins. 
+No more checking `if(!this.userId){ this.ready(); return;}`
 
-- [Universe Update Operators On Document](https://atmospherejs.com/vazco/universe-update-operators-on-document)
+### Simple way
+
+```
+UniCollection.publish('example', function() {
+    return [Colls.MyColl.find(), Colls.Books.find()];
+});
+```
+You can return one Collection.Cursor, an array of Collection.Cursors.
+If a publish function does not return a cursor or array of cursors,
+it is assumed to be using the low-level added/changed/removed interface, and it must also call ready once the initial record set is complete.
+
+### Parameters
+- `name` Name of the record set.
+If null, the set has no name, and the record set is automatically sent to all connected clients
+(if you use mixin "PublishAccessMixin" then with access control)
+- `handler` {Function} Function called on the server each time a client subscribes.
+Inside the function, this is the publish handler object, described below.
+If the client passed arguments to subscribe, the function is called with the same arguments.
+#### options {Object}
+- `override` {boolean} resets handler for publication name. (only named publication can be overridden)
+- `userOnly` {boolean} publication will be available only for users
+- `adminOnly` {boolean} publication will be available only for admins
+
+### Low-level publish api
+
+```
+UniCollection.publish('example', function() {
+    var self = this;
+    var handle = Colls.Books.find({roomId: roomId}).observeChanges({
+        added: function (id, fields) {
+            self.added("books", id, fields);
+        },
+        changed: function (id, fields, allowedFields) {
+            self.changed("books", id, fields);
+        },
+        removed: function (id, fields) {
+            self.removed("books", id);
+        }
+    });
+    self.onStop(function () {
+        handle.stop();
+    });
+});
+```
+- `allowedFields` Dictionary of fields possible return or exclude from it. ( They should be the same as was passed to options.fields in find() method. ) You can get allowed/excluded fields directly from cursor:
+Server side:
+var allowedFields = cursor._cursorDescription.options.fields
+
+### Using with build-in mappings
+
+This package provides simple way mapping mechanism.
+You must return base collection or collections and using method setMappings, define relational mappings
+
+```
+UniCollection.publish('example', function() {
+    this.setMappings(Colls.MyColl, [
+        //Map a value of organisationsIds from selected documents of Colls.MyColl to document from Colls.Rooms
+        {
+            key: 'organisationsIds',
+            collection: Colls.Rooms
+        },
+        //Map ids of selected document of Colls.MyColl to document from Meteor.users where orgIds = id
+        {
+                    key: 'orgIds',
+                    collection: Meteor.users,
+                    reverse: true // reverse direction of the relationship (inverse relationship is more complex)
+        }
+     ]);
+    //For mapped users you can map another documents
+    this.setMappings(Meteor.users, [
+            {
+                key: 'organisationsIds',
+                collection: Colls.Rooms,
+                reverse: true
+
+            }
+    ]);
+    //And another....
+    this.setMappings(Colls.Rooms, [
+        {
+            key: 'roomId',
+            reverse:true,
+            collection: Colls.Documents,
+            options: {fields: { title: 1 }}
+        }
+    ]);
+
+    return Colls.MyColl.find();
+});
+```
+### Accessibility for users
+
+#### users only
+```
+UniCollection.publish('example', function() {
+    return Colls.Books.find();
+}, {userOnly:true});
+```
+
+#### admins only
+```
+UniCollection.publish('example', function() {
+    return Colls.Books.find();
+}, {adminOnly:true});
+```
+
+## Additional extensions for this package
+
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
 
