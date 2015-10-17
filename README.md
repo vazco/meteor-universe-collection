@@ -91,14 +91,14 @@ If you want create a local collection please pass in options property: `connecti
 ### Methods on collection object
 - `setDocumentPrototype(transformationObject)`
 
-    Sets transformation function for collection.
+Sets transformation function for collection.
 
-    Function passed as an argument will be executed for each document
+Function passed as an argument will be executed for each document
 
-    to transform selected documents before the method (like: find, findOne) returns them.
+to transform selected documents before the method (like: find, findOne) returns them.
 
-    UniDoc is a default of document prototype.
-    (You can also pass it in collection constructor in options as a key 'documentPrototype')
+UniDoc is a default of document prototype.
+(You can also pass it in collection constructor in options as a key 'documentPrototype')
 
 
 ```js
@@ -119,13 +119,13 @@ If you want create a local collection please pass in options property: `connecti
 
 - `docHelpers(objectWithMethods)`
 
-       Using this method you can add new helpers function into document prototype.
+Using this method you can add new helpers function into document prototype.
 
-       It's alternative way to setDocumentPrototype.
+It's alternative way to setDocumentPrototype.
 
-       All of this methods will be added to returned document by function find, findOne.
+All of this methods will be added to returned document by function find, findOne.
 
-       Documents helpers did not depend from transformationObject.
+Documents helpers did not depend from transformationObject.
 
 ```js
     var collection = new UniCollection('some');
@@ -160,24 +160,23 @@ You can pass a raw object of document and save it after or save it in the moment
   var docInstance3 = collection.create({title: 'abcde'}, {save: true, useSchema: 'schemaName'});
 ```
 - `methods`
-    Remote methods on collection that can be invoked over the network by clients from collection instance.
-    From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
-    Additionally, handler will be have in context a collection object under this.collection.
-     Rest things like userId, connection are same as handlers in Meteor.methods have.
+Remote methods on collection that can be invoked over the network by clients from collection instance.
+From UniCollection you can define and call remote methods (just like Meteor.methods and Meteor.call).
+Additionally, handler will be have in context a collection object under this.collection.
+Rest things like userId, connection are same as handlers in Meteor.methods have.
 
 - `docMethods`
-    Remote methods on document that can be invoked over the network by clients from document instance.
+Remote methods on document that can be invoked over the network by clients from document instance.
 
 
 - `hasDocument(docOrId)`
 
-    Checks if document belongs to this collection
+Checks if document belongs to this collection
 
 - `setDefaultSort(options)`
 
-    Adds default sort options to find,
-
-    but default sort option are used only when someone call find without sort options
+Adds default sort options to find,
+but default sort option are used only when someone call find without sort options
 
 ```js
     Colls.Books.setDefaultSort({ title: 1 })
@@ -185,36 +184,54 @@ You can pass a raw object of document and save it after or save it in the moment
 
 - `ensureUniDoc(docOrId, pattern=this.matchingDocument(), errorMessage=)`
 
-    Ensures that returned document is matched against pattern.
+Ensures that returned document is matched against pattern.
 
-    It accepts document but also id of existing document.
+It accepts document but also id of existing document.
 
-    If the match fails, ensureUniDoc throws a Match.Error
+If the match fails, ensureUniDoc throws a Match.Error
 
-    but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
+but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
 
 ```js
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
-   As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
+As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
-   but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
+but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
 
-   And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
 
 
 - `matchingDocument(keysPatterns=)`
 
-    Pattern argument to checking functions like: this.ensureUniDoc(), check() and Match.test()
+Pattern argument to checking functions like: this.ensureUniDoc(), check() and Match.test()
 
-    Basic pattern checks document type if type is equal to current constructor of documents in this collection.
+Basic pattern checks document type if type is equal to current constructor of documents in this collection.
 
-    Additionally you can precise patterns for fields of document, using keysPatterns
+Additionally you can precise patterns for fields of document, using keysPatterns
 
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
+    // or 
+    Match.test(Colls.Books.matchingDocument({title: String}));
+    // or
+    check(doc, Colls.Books.matchingDocument());
 ```
+
+- `ensureMongoIndex(indexName, keys, options = {})`
+Creates an index on the specified field if the index does not already exist.
+If universe detects,that index under name is changed,
+mechanism will drop the old index under name passed as first parameter to this function.
+ - Params
+  - {string} indexName Unique name of index for this collection
+  - {object} keys An Object that contains the field and value pairs where the field is the index key
+ and the value describes the type of index for that field.
+ For an ascending index on a field, specify a value of 1; for descending index, specify a value of -1.
+  - {object} options Optional. A document that contains a set of options that controls the creation of the index.
+
+- `dropMongoIndex(indexName)`
+Drops the specified index from a collection.
 
 ## Schemas
 
@@ -487,7 +504,34 @@ Removing unnecessary hooks
 - `offBeforeCall(hookName, idName)`
 - `offAfterCall(hookName, idName)`
 
-### Context in hook
+### Example
+
+```
+var col = new UniCollection('some');
+
+col.onBeforeCall('insert', 'myAwesomeInsert', function(doc){
+  console.log('will be inserted', doc, 'to collection:', this.getCollection());
+});
+
+col.onBeforeCall('update', 'myAwesomeUpdate', function(selector, modifier, options){
+  this.oldDoc = this.getCollection().findOne(selector);
+});
+
+col.onAfterCall('update', 'afterAwesomeUpdate', function(selector, modifier, options){
+  console.log('Old doc:', this.oldDoc, 'new doc:', this.getCollection().findOne(selector));
+});
+
+coll.insert({title: 'Awesome doc'});
+
+coll.update({title: 'Awesome doc'}, {$set: {title: 'Much more awesome doc'}});
+
+coll.offBeforeCall('insert', 'myAwesomeInsert');
+
+coll.insert({title: 'Awesome doc2'});
+
+```
+
+### Context of hook handler
 #### Shared context
 Context of all hooks is shared. It mean that you can add something in before hook and read it in onAfterCall.
 
