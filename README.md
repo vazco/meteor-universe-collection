@@ -940,6 +940,12 @@ UniCollection.publish('example', function() {
 }, {adminOnly:true});
 ```
 
+## Support for Universe modules
+
+```
+import {UniCollection, UniUsers, UniDoc, UniUser, BackupMixin, PublishAccessMixin} from '{universe:collection}';
+```
+
 ## Additional extensions for this package
 
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
