@@ -61,7 +61,7 @@ class ShowErrorMixin extends UniCollection.AbstractMixin {
                     onErrorFn(err);
                 }
                 if (cb) {
-                    return cb.call(this, arguments);
+                    return cb.apply(this, arguments);
                 }
             });
         });
