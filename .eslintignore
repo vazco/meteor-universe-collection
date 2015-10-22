@@ -1,0 +1,2 @@
+# we need this until espree can parse {...params} = {}
+mixins/ShowErrorMixin.js

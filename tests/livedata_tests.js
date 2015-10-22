@@ -1,3 +1,5 @@
+/*eslint no-inner-declarations:0 camelcase:0 */
+
 // We keep track of the collections, so we can refer to them by name
 COLLECTIONS = {};
 
@@ -19,7 +21,7 @@ if (Meteor.isServer) {
                 return c.find();
             });
         },
-        dropInsecureCollection  : function (name) {
+        dropInsecureCollection: function (name) {
             var c = COLLECTIONS[name];
             c._dropCollection();
         }
@@ -33,15 +35,15 @@ var INSERTED_IDS = {};
 Meteor.methods({
     insertObjects: function (collectionName, doc, count) {
         var c = COLLECTIONS[collectionName];
-        var ids = [];
-        for (var i = 0; i < count; i++) {
-            var id = c.insert(doc);
+        var ids = [], i, id;
+        for (i = 0; i < count; i++) {
+            id = c.insert(doc);
             INSERTED_IDS[collectionName] = (INSERTED_IDS[collectionName] || []).concat([id]);
             ids.push(id);
         }
         return ids;
     },
-    doMeteorCall : function (name /*, arguments */) {
+    doMeteorCall: function (/* arguments */) {
         var args = Array.prototype.slice.call(arguments);
 
         return Meteor.call.apply(null, args);
@@ -59,22 +61,8 @@ var runInFence = function (f) {
 };
 
 // Helpers for upsert tests
-
-var stripId = function (obj) {
-    delete obj._id;
-};
-
-var compareResults = function (test, skipIds, actual, expected) {
-    if (skipIds) {
-        _.map(actual, stripId);
-        _.map(expected, stripId);
-    }
-    // (technically should ignore order in comparison)
-    test.equal(actual, expected);
-};
-
 var upsert = function (coll, useUpdate, query, mod, options, callback) {
-    if (!callback && typeof options === "function") {
+    if (!callback && typeof options === 'function') {
         callback = options;
         options = {};
     }
@@ -85,20 +73,19 @@ var upsert = function (coll, useUpdate, query, mod, options, callback) {
                 _.extend({upsert: true}, options),
                 function (err, result) {
                     callback(err, !err && {
-                            numberAffected: result
-                        });
+                        numberAffected: result
+                    });
                 });
         return {
             numberAffected: coll.update(query, mod,
                 _.extend({upsert: true}, options))
         };
-    } else {
-        return coll.upsert(query, mod, options, callback);
     }
+    return coll.upsert(query, mod, options, callback);
 };
 
 var checkDocument = function (test, docToCheck, againstFields) {
-    test.isTrue(typeof docToCheck === "object");
+    test.isTrue(typeof docToCheck === 'object');
     test.isTrue(docToCheck instanceof UniCollection.UniDoc);
     var col = docToCheck.getCollection();
     test.isTrue(!!col.ensureUniDoc(docToCheck));
@@ -107,7 +94,7 @@ var checkDocument = function (test, docToCheck, againstFields) {
     });
 };
 
-var upsertTestMethod = "livedata_upsert_test_method";
+var upsertTestMethod = 'livedata_upsert_test_method';
 var upsertTestMethodColl;
 
 // This is the implementation of the upsert test method on both the client and
@@ -119,22 +106,22 @@ var upsertTestMethodColl;
 // a stub, those exceptions will get caught and logged.
 var upsertTestMethodImpl = function (coll, useUpdate, test) {
     coll.remove({});
-    var result1 = upsert(coll, useUpdate, {foo: "bar"}, {foo: "bar"});
+    var result1 = upsert(coll, useUpdate, {foo: 'bar'}, {foo: 'bar'});
 
     if (!test) {
         test = {
-            equal  : function (a, b) {
+            equal: function (a, b) {
                 if (!EJSON.equals(a, b))
-                    throw new Error("Not equal: " +
-                        JSON.stringify(a) + ", " + JSON.stringify(b));
+                    throw new Error('Not equal: ' +
+                        JSON.stringify(a) + ', ' + JSON.stringify(b));
             },
-            isTrue : function (a) {
+            isTrue: function (a) {
                 if (!a)
-                    throw new Error("Not truthy: " + JSON.stringify(a));
+                    throw new Error('Not truthy: ' + JSON.stringify(a));
             },
             isFalse: function (a) {
                 if (a)
-                    throw new Error("Not falsey: " + JSON.stringify(a));
+                    throw new Error('Not falsey: ' + JSON.stringify(a));
             }
         };
     }
@@ -147,12 +134,12 @@ var upsertTestMethodImpl = function (coll, useUpdate, test) {
     if (!useUpdate)
         test.isTrue(result1.insertedId);
     var fooId = result1.insertedId;
-    var obj = coll.findOne({foo: "bar"});
+    var obj = coll.findOne({foo: 'bar'});
     test.isTrue(obj);
     if (!useUpdate)
         test.equal(obj._id, result1.insertedId);
     var result2 = upsert(coll, useUpdate, {_id: fooId},
-        {$set: {foo: "baz "}});
+        {$set: {foo: 'baz '}});
     test.isTrue(result2);
     test.equal(result2.numberAffected, 1);
     test.isFalse(result2.insertedId);
@@ -163,30 +150,30 @@ if (Meteor.isServer) {
     m[upsertTestMethod] = function (run, useUpdate, options) {
         check(run, String);
         check(useUpdate, Boolean);
-        upsertTestMethodColl = new UniCollection(upsertTestMethod + "_collection_" + run, options);
+        upsertTestMethodColl = new UniCollection(upsertTestMethod + '_collection_' + run, options);
         upsertTestMethodImpl(upsertTestMethodColl, useUpdate);
     };
     Meteor.methods(m);
 }
 
 Meteor._FailureTestCollection =
-    new UniCollection("___meteor_failure_test_collection");
+    new UniCollection('___meteor_failure_test_collection');
 
-// For test "document with a custom type"
+// For test 'document with a custom type'
 var Dog = function (name, color, actions) {
     var self = this;
     self.color = color;
     self.name = name;
-    self.actions = actions || [{name: "wag"}, {name: "swim"}];
+    self.actions = actions || [{name: 'wag'}, {name: 'swim'}];
 };
 _.extend(Dog.prototype, {
-    getName    : function () {
+    getName: function () {
         return this.name;
     },
-    getColor   : function () {
+    getColor: function () {
         return this.name;
     },
-    equals     : function (other) {
+    equals: function (other) {
         return other.name === this.name &&
             other.color === this.color &&
             EJSON.equals(other.actions, this.actions);
@@ -194,17 +181,17 @@ _.extend(Dog.prototype, {
     toJSONValue: function () {
         return {color: this.color, name: this.name, actions: this.actions};
     },
-    typeName   : function () {
-        return "dog";
+    typeName: function () {
+        return 'dog';
     },
-    clone      : function () {
+    clone: function () {
         return new Dog(this.name, this.color);
     },
-    speak      : function () {
-        return "woof";
+    speak: function () {
+        return 'woof';
     }
 });
-EJSON.addType("dog", function (o) {
+EJSON.addType('dog', function (o) {
     return new Dog(o.name, o.color, o.actions);
 });
 
@@ -214,20 +201,20 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
     var collectionOptions = {idGeneration: idGeneration};
 
-    testAsyncMulti("UniCollection - database error reporting. " + idGeneration, [
+    testAsyncMulti('UniCollection - database error reporting. ' + idGeneration, [
         function (test, expect) {
             var ftc = Meteor._FailureTestCollection;
 
-            var exception = function (err, res) {
+            var exception = function (err) {
                 test.instanceOf(err, Error);
             };
 
-            _.each(["insert", "remove", "update"], function (op) {
-                var arg = (op === "insert" ? {} : 'bla');
+            _.each(['insert', 'remove', 'update'], function (op) {
+                var arg = (op === 'insert' ? {} : 'bla');
                 var arg2 = {};
 
                 var callOp = function (callback) {
-                    if (op === "update") {
+                    if (op === 'update') {
                         ftc[op](arg, arg2, callback);
                     } else {
                         ftc[op](arg, callback);
@@ -254,27 +241,27 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
     ]);
 
 
-    Tinytest.addAsync("UniCollection - basics, " + idGeneration, function (test, onComplete) {
+    Tinytest.addAsync('UniCollection - basics, ' + idGeneration, function (test, onComplete) {
         var run = test.runId();
         var coll, coll2;
         if (Meteor.isClient) {
             let unmanaged = _.extend({connection: null}, collectionOptions);
-            coll = new UniCollection('basics_coll_'+run, unmanaged); // local, unmanaged
-            coll2 = new UniCollection('basics_coll2'+run, unmanaged); // local, unmanaged
+            coll = new UniCollection('basics_coll_' + run, unmanaged); // local, unmanaged
+            coll2 = new UniCollection('basics_coll2' + run, unmanaged); // local, unmanaged
         } else {
-            coll = new UniCollection("basics_test_collection_" + run, collectionOptions);
-            coll2 = new UniCollection("basics_test_collection_2_" + run, collectionOptions);
+            coll = new UniCollection('basics_test_collection_' + run, collectionOptions);
+            coll2 = new UniCollection('basics_test_collection_2_' + run, collectionOptions);
         }
 
         var log = '';
-        var obs = coll.find({run: run}, {sort: ["x"]}).observe({
-            addedAt  : function (doc, before_index, before) {
+        var obs = coll.find({run: run}, {sort: ['x']}).observe({
+            addedAt: function (doc, before_index, before) {
                 log += 'a(' + doc.x + ',' + before_index + ',' + before + ')';
             },
             changedAt: function (new_doc, old_doc, at_index) {
                 log += 'c(' + new_doc.x + ',' + at_index + ',' + old_doc.x + ')';
             },
-            movedTo  : function (doc, old_index, new_index) {
+            movedTo: function (doc, old_index, new_index) {
                 log += 'm(' + doc.x + ',' + old_index + ',' + new_index + ')';
             },
             removedAt: function (doc, at_index) {
@@ -304,7 +291,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         };
 
         test.equal(coll.find({run: run}).count(), 0);
-        test.equal(coll.findOne("abc"), undefined);
+        test.equal(coll.findOne('abc'), undefined);
         test.equal(coll.findOne({run: run}), undefined);
 
         expectObserve('a(1,0,null)', function () {
@@ -321,13 +308,13 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             test.equal(coll.findOne(id2).x, 4);
         });
 
-        test.equal(coll.findOne({run: run}, {sort: ["x"], skip: 0}).x, 1);
-        test.equal(coll.findOne({run: run}, {sort: ["x"], skip: 1}).x, 4);
+        test.equal(coll.findOne({run: run}, {sort: ['x'], skip: 0}).x, 1);
+        test.equal(coll.findOne({run: run}, {sort: ['x'], skip: 1}).x, 4);
         test.equal(coll.findOne({run: run}, {sort: {x: -1}, skip: 0}).x, 4);
         test.equal(coll.findOne({run: run}, {sort: {x: -1}, skip: 1}).x, 1);
 
 
-        var cur = coll.find({run: run}, {sort: ["x"]});
+        var cur = coll.find({run: run}, {sort: ['x']});
         var total = 0;
         var index = 0;
         var context = {};
@@ -361,7 +348,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             return doc.x * 2;
         }, context), [2, 8]);
 
-        test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), "x"),
+        test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
             [4, 1]);
 
         expectObserve('', function () {
@@ -372,14 +359,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         expectObserve('c(3,0,1)c(6,1,4)', function () {
             var count = coll.update({run: run}, {$inc: {x: 2}}, {multi: true});
             test.equal(count, 2);
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), "x"),
+            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
                 [6, 3]);
         });
 
         expectObserve(['c(13,0,3)m(13,0,1)', 'm(6,1,0)c(13,1,3)',
             'c(13,0,3)m(6,1,0)', 'm(3,0,1)c(13,1,3)'], function () {
             coll.update({run: run, x: 3}, {$inc: {x: 10}}, {multi: true});
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), "x"),
+            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
                 [13, 6]);
         });
 
@@ -404,14 +391,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         onComplete();
     });
 
-    Tinytest.addAsync("UniCollection - fuzz test, " + idGeneration, function (test, onComplete) {
+    Tinytest.addAsync('UniCollection - fuzz test, ' + idGeneration, function (test, onComplete) {
 
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('fuzz'+ run, _.extend({connection: null}, collectionOptions)); // local
+            coll = new UniCollection('fuzz' + run, _.extend({connection: null}, collectionOptions)); // local
         } else {
-            coll = new UniCollection("livedata_test_collection_" + run, collectionOptions);
+            coll = new UniCollection('livedata_test_collection_' + run, collectionOptions);
         }
 
         // fuzz test of observe(), especially the server-side diffing
@@ -419,8 +406,8 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         var correct = [];
         var counters = {add: 0, change: 0, move: 0, remove: 0};
 
-        var obs = coll.find({run: run}, {sort: ["x"]}).observe({
-            addedAt  : function (doc, before_index) {
+        var obs = coll.find({run: run}, {sort: ['x']}).observe({
+            addedAt: function (doc, before_index) {
                 counters.add++;
                 actual.splice(before_index, 0, doc.x);
             },
@@ -429,7 +416,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 test.equal(actual[at_index], old_doc.x);
                 actual[at_index] = new_doc.x;
             },
-            movedTo  : function (doc, old_index, new_index) {
+            movedTo: function (doc, old_index, new_index) {
                 counters.move++;
                 test.equal(actual[old_index], doc.x);
                 actual.splice(old_index, 1);
@@ -452,7 +439,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         // Use non-deterministic randomness so we can have a shorter fuzz
         // test (fewer iterations).  For deterministic (fully seeded)
         // randomness, remove the call to Random.fraction().
-        var seededRandom = new SeededRandom("foobard" + Random.fraction());
+        var seededRandom = new SeededRandom('foobard' + Random.fraction());
         // Random integer in [0,n)
         var rnd = function (n) {
             return seededRandom.nextIntBetween(0, n - 1);
@@ -478,6 +465,8 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             var max_counters = _.clone(counters);
 
             finishObserve(function () {
+                var x, val;
+
                 if (Meteor.isServer)
                     obs._multiplexer._observeDriver._suspendPolling();
 
@@ -489,18 +478,18 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                     var which = rnd(correct.length);
                     if (op === 0 || step < 2 || !correct.length) {
                         // Add
-                        var x = rnd(1000000);
+                        x = rnd(1000000);
                         coll.insert({run: run, x: x});
                         correct.push(x);
                         max_counters.add++;
                     } else if (op === 1 || op === 2) {
-                        var x = correct[which];
+                        x = correct[which];
                         if (op === 1)
                         // Small change, not likely to cause a move
-                            var val = x + (rnd(2) ? -1 : 1);
+                            val = x + (rnd(2) ? -1 : 1);
                         else
                         // Large change, likely to cause a move
-                            var val = rnd(1000000);
+                            val = rnd(1000000);
                         coll.update({run: run, x: x}, {$set: {x: val}});
                         correct[which] = val;
                         max_counters.change++;
@@ -536,22 +525,22 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
     });
 
-    Tinytest.addAsync("UniCollection - stop handle in callback, " + idGeneration, function (test, onComplete) {
+    Tinytest.addAsync('UniCollection - stop handle in callback, ' + idGeneration, function (test, onComplete) {
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('unmanaged'+ run, _.extend({connection: null}, collectionOptions)); // local, unmanaged
+            coll = new UniCollection('unmanaged' + run, _.extend({connection: null}, collectionOptions)); // local, unmanaged
         } else {
-            coll = new UniCollection("stopHandleInCallback-" + run, collectionOptions);
+            coll = new UniCollection('stopHandleInCallback-' + run, collectionOptions);
         }
 
         var output = [];
 
         var handle = coll.find().observe({
-            added  : function (doc) {
+            added: function (doc) {
                 output.push({added: doc._id});
             },
-            changed: function (newDoc) {
+            changed: function (/*newDoc*/) {
                 output.push('changed');
                 handle.stop();
             }
@@ -591,13 +580,13 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
 // This behavior isn't great, but it beats deadlock.
     if (Meteor.isServer) {
-        Tinytest.addAsync("UniCollection - recursive observe throws, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - recursive observe throws, ' + idGeneration, function (test, onComplete) {
             var run = test.runId();
-            var coll = new UniCollection("observeInCallback-" + run, collectionOptions);
+            var coll = new UniCollection('observeInCallback-' + run, collectionOptions);
 
             var callbackCalled = false;
             var handle = coll.find({}).observe({
-                added: function (newDoc) {
+                added: function (/*newDoc*/) {
                     callbackCalled = true;
                     test.throws(function () {
                         coll.find({}).observe();
@@ -616,9 +605,9 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             onComplete();
         });
 
-        Tinytest.addAsync("UniCollection - cursor dedup, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - cursor dedup, ' + idGeneration, function (test, onComplete) {
             var run = test.runId();
-            var coll = new UniCollection("cursorDedup-" + run, collectionOptions);
+            var coll = new UniCollection('cursorDedup-' + run, collectionOptions);
 
             var observer = function (noAdded) {
                 var output = [];
@@ -722,14 +711,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             onComplete();
         });
 
-        Tinytest.addAsync("UniCollection - async server-side insert, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - async server-side insert, ' + idGeneration, function (test, onComplete) {
             // Tests that insert returns before the callback runs. Relies on the fact
             // that mongo does not run the callback before spinning off the event loop.
             var cname = Random.id();
             var coll = new UniCollection(cname);
-            var doc = {foo: "bar"};
+            var doc = {foo: 'bar'};
             var x = 0;
-            coll.insert(doc, function (err, result) {
+            coll.insert(doc, function (err) {
                 test.equal(err, null);
                 test.equal(x, 1);
                 onComplete();
@@ -737,14 +726,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             x++;
         });
 
-        Tinytest.addAsync("UniCollection - async server-side update, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - async server-side update, ' + idGeneration, function (test, onComplete) {
             // Tests that update returns before the callback runs.
             var cname = Random.id();
             var coll = new UniCollection(cname);
-            var doc = {foo: "bar"};
+            var doc = {foo: 'bar'};
             var x = 0;
             var id = coll.insert(doc);
-            coll.update(id, {$set: {foo: "baz"}}, function (err, result) {
+            coll.update(id, {$set: {foo: 'baz'}}, function (err, result) {
                 test.equal(err, null);
                 test.equal(result, 1);
                 test.equal(x, 1);
@@ -753,14 +742,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             x++;
         });
 
-        Tinytest.addAsync("UniCollection - async server-side remove, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - async server-side remove, ' + idGeneration, function (test, onComplete) {
             // Tests that remove returns before the callback runs.
             var cname = Random.id();
             var coll = new UniCollection(cname);
-            var doc = {foo: "bar"};
+            var doc = {foo: 'bar'};
             var x = 0;
             var id = coll.insert(doc);
-            coll.remove(id, function (err, result) {
+            coll.remove(id, function (err) {
                 test.equal(err, null);
                 test.isFalse(coll.findOne(id));
                 test.equal(x, 1);
@@ -850,11 +839,9 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         }, function (test, expect) {
 
             var coll = new UniCollection(this.collectionName, collectionOptions);
-            var docId;
             coll.insert({d: new Date(1356152390004)}, expect(function (err, id) {
                 test.isFalse(err);
                 test.isTrue(id);
-                docId = id;
                 var cursor = coll.find();
                 test.equal(cursor.count(), 1);
                 test.equal(coll.findOne().d.getFullYear(), 2012);
@@ -863,13 +850,13 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
     ]);
 
     var bin = Base64.decode(
-        "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyBy" +
-        "ZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJv" +
-        "bSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhl" +
-        "IG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdo" +
-        "dCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdl" +
-        "bmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9y" +
-        "dCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=");
+        'TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyBy' +
+        'ZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJv' +
+        'bSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhl' +
+        'IG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdo' +
+        'dCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdl' +
+        'bmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9y' +
+        'dCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4=');
 
     testAsyncMulti('UniCollection - document with binary data, ' + idGeneration, [
         function (test, expect) {
@@ -881,11 +868,9 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             }
         }, function (test, expect) {
             var coll = new UniCollection(this.collectionName, collectionOptions);
-            var docId;
             coll.insert({b: bin}, expect(function (err, id) {
                 test.isFalse(err);
                 test.isTrue(id);
-                docId = id;
                 var cursor = coll.find();
                 test.equal(cursor.count(), 1);
                 var inColl = coll.findOne();
@@ -908,7 +893,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             var docId;
             // Dog is implemented at the top of the file, outside of the idGeneration
             // loop (so that we only call EJSON.addType once).
-            var d = new Dog("reginald", "purple");
+            var d = new Dog('reginald', 'purple');
             self.coll.insert({d: d}, expect(function (err, id) {
                 test.isFalse(err);
                 test.isTrue(id);
@@ -918,48 +903,48 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 test.equal(cursor.count(), 1);
                 var inColl = self.coll.findOne();
                 test.isTrue(inColl);
-                inColl && test.equal(inColl.d.speak(), "woof");
+                inColl && test.equal(inColl.d.speak(), 'woof');
             }));
         }, function (test, expect) {
             var self = this;
-            self.coll.insert(new Dog("rover", "orange"), expect(function (err, id) {
+            self.coll.insert(new Dog('rover', 'orange'), expect(function (err, id) {
                 test.isTrue(err);
                 test.isFalse(id);
             }));
         }, function (test, expect) {
             var self = this;
             self.coll.update(
-                self.docId, new Dog("rover", "orange"), expect(function (err) {
+                self.docId, new Dog('rover', 'orange'), expect(function (err) {
                     test.isTrue(err);
                 }));
         }
     ]);
 
     if (Meteor.isServer) {
-        Tinytest.addAsync("UniCollection - update return values, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - update return values, ' + idGeneration, function (test, onComplete) {
             var run = test.runId();
-            var coll = new UniCollection("livedata_update_result_" + run, collectionOptions);
+            var coll = new UniCollection('livedata_update_result_' + run, collectionOptions);
 
-            coll.insert({foo: "bar"});
-            coll.insert({foo: "baz"});
-            test.equal(coll.update({}, {$set: {foo: "qux"}}, {multi: true}),
+            coll.insert({foo: 'bar'});
+            coll.insert({foo: 'baz'});
+            test.equal(coll.update({}, {$set: {foo: 'qux'}}, {multi: true}),
                 2);
-            coll.update({}, {$set: {foo: "quux"}}, {multi: true}, function (err, result) {
+            coll.update({}, {$set: {foo: 'quux'}}, {multi: true}, function (err, result) {
                 test.isFalse(err);
                 test.equal(result, 2);
                 onComplete();
             });
         });
 
-        Tinytest.addAsync("UniCollection - remove return values, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - remove return values, ' + idGeneration, function (test, onComplete) {
             var run = test.runId();
-            var coll = new UniCollection("livedata_update_result_" + run, collectionOptions);
+            var coll = new UniCollection('livedata_update_result_' + run, collectionOptions);
 
-            coll.insert({foo: "bar"});
-            coll.insert({foo: "baz"});
+            coll.insert({foo: 'bar'});
+            coll.insert({foo: 'baz'});
             test.equal(coll.remove({}), 2);
-            coll.insert({foo: "bar"});
-            coll.insert({foo: "baz"});
+            coll.insert({foo: 'bar'});
+            coll.insert({foo: 'baz'});
             coll.remove({}, function (err, result) {
                 test.isFalse(err);
                 test.equal(result, 2);
@@ -968,9 +953,9 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         });
 
 
-        Tinytest.addAsync("UniCollection - id-based invalidation, " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - id-based invalidation, ' + idGeneration, function (test, onComplete) {
             var run = test.runId();
-            var coll = new UniCollection("livedata_invalidation_collection_" + run, collectionOptions);
+            var coll = new UniCollection('livedata_invalidation_collection_' + run, collectionOptions);
 
             coll.allow({
                 update: function () {
@@ -998,20 +983,20 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 handlesToStop.push(handle);
             };
 
-            observe("all", {});
-            observe("id1Direct", id1);
-            observe("id1InQuery", {_id: id1, z: null});
-            observe("id2Direct", id2);
-            observe("id2InQuery", {_id: id2, z: null});
-            observe("bothIds", {_id: {$in: [id1, id2]}});
+            observe('all', {});
+            observe('id1Direct', id1);
+            observe('id1InQuery', {_id: id1, z: null});
+            observe('id2Direct', id2);
+            observe('id2InQuery', {_id: id2, z: null});
+            observe('bothIds', {_id: {$in: [id1, id2]}});
 
             var resetPollsAndRunInFence = function (f) {
                 polls = {};
                 runInFence(f);
             };
 
-            // Update id1 directly. This should poll all but the "id2" queries. "all"
-            // and "bothIds" increment by 2 because they are looking at both.
+            // Update id1 directly. This should poll all but the 'id2' queries. 'all'
+            // and 'bothIds' increment by 2 because they are looking at both.
             resetPollsAndRunInFence(function () {
                 coll.update(id1, {$inc: {x: 1}});
             });
@@ -1019,7 +1004,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 polls,
                 {all: 1, id1Direct: 1, id1InQuery: 1, bothIds: 1});
 
-            // Update id2 using a funny query. This should poll all but the "id1"
+            // Update id2 using a funny query. This should poll all but the 'id1'
             // queries.
             resetPollsAndRunInFence(function () {
                 coll.update({_id: id2, q: null}, {$inc: {x: 1}});
@@ -1035,7 +1020,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             test.equal(
                 polls,
                 {
-                    all    : 1, id1Direct: 1, id1InQuery: 1, id2Direct: 1, id2InQuery: 1,
+                    all: 1, id1Direct: 1, id1InQuery: 1, id2Direct: 1, id2InQuery: 1,
                     bothIds: 1
                 });
 
@@ -1045,9 +1030,9 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             onComplete();
         });
 
-        Tinytest.add("UniCollection - upsert error parse, " + idGeneration, function (test) {
+        Tinytest.add('UniCollection - upsert error parse, ' + idGeneration, function (test) {
             var run = test.runId();
-            var coll = new UniCollection("livedata_upsert_errorparse_collection_" + run, collectionOptions);
+            var coll = new UniCollection('livedata_upsert_errorparse_collection_' + run, collectionOptions);
 
             coll.insert({_id: 'foobar'});
             var err;
@@ -1069,27 +1054,27 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
     } // end Meteor.isServer
 
     if (Meteor.isClient) {
-        Tinytest.addAsync("UniCollection - async update/remove return values over network " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - async update/remove return values over network ' + idGeneration, function (test, onComplete) {
             var coll;
             var run = test.runId();
-            var collName = "livedata_upsert_collection_" + run;
-            Meteor.call("createInsecureCollection", collName, collectionOptions);
+            var collName = 'livedata_upsert_collection_' + run;
+            Meteor.call('createInsecureCollection', collName, collectionOptions);
             coll = new UniCollection(collName, collectionOptions);
-            Meteor.subscribe("c-" + collName, function () {
-                coll.insert({_id: "foo"});
-                coll.insert({_id: "bar"});
-                coll.update({_id: "foo"}, {$set: {foo: 1}}, {multi: true}, function (err, result) {
+            Meteor.subscribe('c-' + collName, function () {
+                coll.insert({_id: 'foo'});
+                coll.insert({_id: 'bar'});
+                coll.update({_id: 'foo'}, {$set: {foo: 1}}, {multi: true}, function (err, result) {
                     test.isFalse(err);
                     test.equal(result, 1);
-                    coll.update({_id: "foo"}, {$set: {foo: 2}}, function (err, result) {
+                    coll.update({_id: 'foo'}, {$set: {foo: 2}}, function (err, result) {
                         test.isFalse(err);
                         test.equal(result, 1);
-                        coll.update({_id: "baz"}, {$set: {foo: 1}}, function (err, result) {
+                        coll.update({_id: 'baz'}, {$set: {foo: 1}}, function (err, result) {
                             test.isFalse(err);
                             test.equal(result, 0);
-                            coll.remove({_id: "foo"}, function (err, result) {
+                            coll.remove({_id: 'foo'}, function (err, result) {
                                 test.equal(result, 1);
-                                coll.remove({_id: "baz"}, function (err, result) {
+                                coll.remove({_id: 'baz'}, function (err, result) {
                                     test.equal(result, 0);
                                     onComplete();
                                 });
@@ -1100,22 +1085,22 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             });
         });
 
-        Tinytest.addAsync("UniCollection - async update/remove return values over network by doc " + idGeneration, function (test, onComplete) {
+        Tinytest.addAsync('UniCollection - async update/remove return values over network by doc ' + idGeneration, function (test, onComplete) {
             var coll;
             var run = test.runId();
-            var collName = "livedata_upsert_collection_" + run;
-            Meteor.call("createInsecureCollection", collName, collectionOptions);
+            var collName = 'livedata_upsert_collection_' + run;
+            Meteor.call('createInsecureCollection', collName, collectionOptions);
             coll = new UniCollection(collName, collectionOptions);
-            for(let i = 0; i < 10; i++){
+            for (let i = 0; i < 10; i++) {
                 coll.insert({z: i});
             }
 
-            Meteor.subscribe("c-" + collName, function () {
-                coll.find().forEach((d)=>{
-                    d.update({$set: {z:1}});
+            Meteor.subscribe('c-' + collName, function () {
+                coll.find().forEach((d) => {
+                    d.update({$set: {z: 1}});
                 });
                 Meteor.setTimeout(() => {
-                    coll.find().forEach((d)=>{
+                    coll.find().forEach((d) => {
                         test.isTrue(d.z === 1);
                     });
                     onComplete();
@@ -1128,16 +1113,16 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 // if we don't get the right return values.
     if (Meteor.isClient) {
         _.each([true, false], function (useUpdate) {
-            Tinytest.addAsync("UniCollection - " + (useUpdate ? "update " : "") + "upsert in method, " + idGeneration, function (test, onComplete) {
+            Tinytest.addAsync('UniCollection - ' + (useUpdate ? 'update ' : '') + 'upsert in method, ' + idGeneration, function (test, onComplete) {
                 var run = test.runId();
-                upsertTestMethodColl = new UniCollection(upsertTestMethod + "_collection_" + run, collectionOptions);
+                upsertTestMethodColl = new UniCollection(upsertTestMethod + '_collection_' + run, collectionOptions);
                 var m = {};
                 delete Meteor.connection._methodHandlers[upsertTestMethod];
-                m[upsertTestMethod] = function (run, useUpdate, options) {
+                m[upsertTestMethod] = function (run, useUpdate /*, options*/) {
                     upsertTestMethodImpl(upsertTestMethodColl, useUpdate, test);
                 };
                 Meteor.methods(m);
-                Meteor.call(upsertTestMethod, run, useUpdate, collectionOptions, function (err, result) {
+                Meteor.call(upsertTestMethod, run, useUpdate, collectionOptions, function (err) {
                     test.isFalse(err);
                     onComplete();
                 });
@@ -1147,13 +1132,13 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
 });  // end idGeneration parametrization
 
-Tinytest.addAsync("UniCollection - create not saved document ", function (test, onComplete) {
+Tinytest.addAsync('UniCollection - create not saved document ', function (test, onComplete) {
     var run = test.runId();
     var coll;
     if (Meteor.isClient) {
         coll = new UniCollection('abc', {connection: null}); // local
     } else {
-        coll = new UniCollection("create_test_collection_" + run);
+        coll = new UniCollection('create_test_collection_' + run);
     }
     test.isTrue(coll.create() instanceof UniCollection.UniDoc);
     onComplete();
@@ -1163,28 +1148,30 @@ testAsyncMulti('UniCollection - create and saved document ', [
     function (test, expect) {
         var run = test.runId();
         if (Meteor.isClient) {
-            this.collectionName = 'cr_'+Random.id()+'_'+run;
+            this.collectionName = 'cr_' + Random.id() + '_' + run;
             Meteor.call('createInsecureCollection', this.collectionName);
             this.coll = new UniCollection(this.collectionName);
             Meteor.subscribe('c-' + this.collectionName, expect());
         } else {
-            this.collectionName = 'cr_'+Random.id()+'_'+run;
+            this.collectionName = 'cr_' + Random.id() + '_' + run;
             this.coll = new UniCollection(this.collectionName);
             expect()();
         }
     },
     function (test, expect) {
-        var doc = this.coll.create({bestDev: 'rabani'}, {callback: expect((err, res) => {
-            test.isFalse(!!err);
-            test.equal(doc, res);
-        }), save: true});
+        var doc = this.coll.create({bestDev: 'rabani'}, {
+            callback: expect((err, res) => {
+                test.isFalse(!!err);
+                test.equal(doc, res);
+            }), save: true
+        });
         test.isTrue(!!doc.getCollectionName());
     }
 ]);
 
 // Consistent id generation tests
-function collectionInsert(test, expect, coll, index) {
-    var clientSideId = coll.insert({name: "foo"}, expect(function (err1, id) {
+function collectionInsert (test, expect, coll /*, index*/) {
+    var clientSideId = coll.insert({name: 'foo'}, expect(function (err1, id) {
         test.equal(id, clientSideId);
         var o = coll.findOne(id);
         test.isTrue(_.isObject(o));
@@ -1192,8 +1179,8 @@ function collectionInsert(test, expect, coll, index) {
     }));
 }
 
-function functionCallsInsert(test, expect, coll, index) {
-    Meteor.call("insertObjects", coll._name, {name: "foo"}, 1, expect(function (err1, ids) {
+function functionCallsInsert (test, expect, coll, index) {
+    Meteor.call('insertObjects', coll._name, {name: 'foo'}, 1, expect(function (err1, ids) {
         test.notEqual((INSERTED_IDS[coll._name] || []).length, 0);
         var stubId = INSERTED_IDS[coll._name][index];
 
@@ -1206,8 +1193,8 @@ function functionCallsInsert(test, expect, coll, index) {
     }));
 }
 
-function functionCalls3Inserts(test, expect, coll, index) {
-    Meteor.call("insertObjects", coll._name, {name: "foo"}, 3, expect(function (err1, ids) {
+function functionCalls3Inserts (test, expect, coll, index) {
+    Meteor.call('insertObjects', coll._name, {name: 'foo'}, 3, expect(function (err1, ids) {
         test.notEqual((INSERTED_IDS[coll._name] || []).length, 0);
         test.equal(ids.length, 3);
 
@@ -1222,8 +1209,8 @@ function functionCalls3Inserts(test, expect, coll, index) {
     }));
 }
 
-function functionChainInsert(test, expect, coll, index) {
-    Meteor.call("doMeteorCall", "insertObjects", coll._name, {name: "foo"}, 1, expect(function (err1, ids) {
+function functionChainInsert (test, expect, coll, index) {
+    Meteor.call('doMeteorCall', 'insertObjects', coll._name, {name: 'foo'}, 1, expect(function (err1, ids) {
         test.notEqual((INSERTED_IDS[coll._name] || []).length, 0);
         var stubId = INSERTED_IDS[coll._name][index];
 
@@ -1236,8 +1223,8 @@ function functionChainInsert(test, expect, coll, index) {
     }));
 }
 
-function functionChain2Insert(test, expect, coll, index) {
-    Meteor.call("doMeteorCall", "doMeteorCall", "insertObjects", coll._name, {name: "foo"}, 1, expect(function (err1, ids) {
+function functionChain2Insert (test, expect, coll, index) {
+    Meteor.call('doMeteorCall', 'doMeteorCall', 'insertObjects', coll._name, {name: 'foo'}, 1, expect(function (err1, ids) {
         test.notEqual((INSERTED_IDS[coll._name] || []).length, 0);
         var stubId = INSERTED_IDS[coll._name][index];
 
@@ -1252,11 +1239,11 @@ function functionChain2Insert(test, expect, coll, index) {
 
 
 _.each({
-    collectionInsert           : collectionInsert,
-    functionCallsInsert        : functionCallsInsert,
-    functionCalls3Insert       : functionCalls3Inserts,
-    functionChainInsert        : functionChainInsert,
-    functionChain2Insert       : functionChain2Insert,
+    collectionInsert: collectionInsert,
+    functionCallsInsert: functionCallsInsert,
+    functionCalls3Insert: functionCalls3Inserts,
+    functionChainInsert: functionChainInsert,
+    functionChain2Insert: functionChain2Insert
 }, function (fn, name) {
     _.each([1, 3], function (repetitions) {
         _.each([1, 3], function (collectionCount) {
@@ -1267,7 +1254,7 @@ _.each({
 
                     var cleanups = this.cleanups = [];
                     this.collections = _.times(collectionCount, function () {
-                        var collectionName = "consistentid_" + Random.id();
+                        var collectionName = 'consistentid_' + Random.id();
                         if (Meteor.isClient) {
                             Meteor.call('createInsecureCollection', collectionName, collectionOptions);
                             Meteor.subscribe('c-' + collectionName, expect());
@@ -1316,46 +1303,48 @@ testAsyncMulti('UniCollection - empty string _id', [
         }
         self.coll = new UniCollection(self.collectionName);
         try {
-            self.coll.insert({_id: "", f: "foo"});
-            test.fail("Insert with an empty _id should fail");
+            self.coll.insert({_id: '', f: 'foo'});
+            test.fail('Insert with an empty _id should fail');
         } catch (e) {
             // ok
         }
-        self.coll.insert({_id: "realid", f: "bar"}, expect(function (err, res) {
-            test.equal(res, "realid");
+        self.coll.insert({_id: 'realid', f: 'bar'}, expect(function (err, res) {
+            test.equal(res, 'realid');
         }));
     },
     function (test, expect) {
         var self = this;
         var docs = self.coll.find().fetch();
-        test.equal(docs, [self.coll.create({_id: "realid", f: "bar"})]);
+        test.equal(docs, [self.coll.create({_id: 'realid', f: 'bar'})]);
+        expect();
     },
     function (test, expect) {
         var self = this;
         if (Meteor.isServer) {
-            self.coll._collection.insert({_id: "", f: "baz"});
+            self.coll._collection.insert({_id: '', f: 'baz'});
             test.equal(self.coll.find().fetch().length, 2);
         }
+        expect();
     }
 ]);
 
-Tinytest.addAsync("UniCollection - local collections with different connections", function (test, onComplete) {
+Tinytest.addAsync('UniCollection - local collections with different connections', function (test, onComplete) {
     var cname = Random.id();
     var cname2 = Random.id();
     var coll1 = new UniCollection(cname);
-    var doc = {foo: "bar"};
+    var doc = {foo: 'bar'};
     var coll2 = new UniCollection(cname2, {connection: null});
-    coll2.insert(doc, function (err, id) {
+    coll2.insert(doc, function () {
         test.equal(coll1.find(doc).count(), 0);
         test.equal(coll2.find(doc).count(), 1);
         onComplete();
     });
 });
 
-Tinytest.addAsync("UniCollection - local collection with null connection, w/ callback", function (test, onComplete) {
+Tinytest.addAsync('UniCollection - local collection with null connection, w/ callback', function (test, onComplete) {
     var cname = Random.id();
     var coll1 = new UniCollection(cname, {connection: null});
-    var doc = {foo: "bar"};
+    var doc = {foo: 'bar'};
     var docId = coll1.insert(doc, function (err, id) {
         test.equal(docId, id);
         test.equal(coll1.findOne(doc)._id, id);
@@ -1363,16 +1352,16 @@ Tinytest.addAsync("UniCollection - local collection with null connection, w/ cal
     });
 });
 
-Tinytest.addAsync("UniCollection - local collection with null connection, w/o callback", function (test, onComplete) {
+Tinytest.addAsync('UniCollection - local collection with null connection, w/o callback', function (test, onComplete) {
     var cname = Random.id();
     var coll1 = new UniCollection(cname, {connection: null});
-    var doc = {foo: "bar"};
+    var doc = {foo: 'bar'};
     var docId = coll1.insert(doc);
     test.equal(coll1.findOne(doc)._id, docId);
     onComplete();
 });
 
-testAsyncMulti("UniCollection - update handles $push with $each correctly", [
+testAsyncMulti('UniCollection - update handles $push with $each correctly', [
     function (test, expect) {
         var self = this;
         var collectionName = Random.id();
@@ -1394,11 +1383,11 @@ testAsyncMulti("UniCollection - update handles $push with $each correctly", [
         self.collection.update(self.id, {
             $push: {
                 elements: {
-                    $each : ['A', 'B', 'C'],
+                    $each: ['A', 'B', 'C'],
                     $slice: -4
                 }
             }
-        }, expect(function (err, res) {
+        }, expect(function (err) {
             test.isFalse(err);
             checkDocument(
                 test,
@@ -1409,7 +1398,7 @@ testAsyncMulti("UniCollection - update handles $push with $each correctly", [
 ]);
 
 if (Meteor.isServer) {
-    Tinytest.add("UniCollection - upsert handles $push with $each correctly", function (test) {
+    Tinytest.add('UniCollection - upsert handles $push with $each correctly', function (test) {
         var collection = new UniCollection(Random.id());
 
         var result = collection.upsert(
@@ -1417,7 +1406,7 @@ if (Meteor.isServer) {
             {
                 $push: {
                     elements: {
-                        $each : ['A', 'B', 'C'],
+                        $each: ['A', 'B', 'C'],
                         $slice: -4
                     }
                 }
@@ -1425,18 +1414,18 @@ if (Meteor.isServer) {
 
         test.equal(collection.findOne(result.insertedId),
             collection.create({
-                _id     : result.insertedId,
-                name    : 'jens',
+                _id: result.insertedId,
+                name: 'jens',
                 elements: ['A', 'B', 'C']
             }));
 
-        var id = collection.insert({name: "david", elements: ['X', 'Y']});
+        var id = collection.insert({name: 'david', elements: ['X', 'Y']});
         result = collection.upsert(
             {name: 'david'},
             {
                 $push: {
                     elements: {
-                        $each : ['A', 'B', 'C'],
+                        $each: ['A', 'B', 'C'],
                         $slice: -4
                     }
                 }
@@ -1444,137 +1433,137 @@ if (Meteor.isServer) {
 
         test.equal(collection.findOne(id),
             collection.create({
-                _id     : id,
-                name    : 'david',
+                _id: id,
+                name: 'david',
                 elements: ['Y', 'A', 'B', 'C']
             }));
     });
 
-    Tinytest.add("UniCollection - upsert handles dotted selectors corrrectly", function (test) {
+    Tinytest.add('UniCollection - upsert handles dotted selectors corrrectly', function (test) {
         var collection = new UniCollection(Random.id());
 
         var result1 = collection.upsert({
-            "subdocument.a": 1
+            'subdocument.a': 1
         }, {
-            $set: {message: "upsert 1"}
+            $set: {message: 'upsert 1'}
         });
 
         test.equal(collection.findOne(result1.insertedId), collection.create({
-            _id        : result1.insertedId,
+            _id: result1.insertedId,
             subdocument: {a: 1},
-            message    : "upsert 1"
+            message: 'upsert 1'
         }));
 
         var result2 = collection.upsert({
-            "subdocument.a": 1
+            'subdocument.a': 1
         }, {
-            $set: {message: "upsert 2"}
+            $set: {message: 'upsert 2'}
         });
 
         test.equal(result2, {numberAffected: 1});
 
         test.equal(collection.findOne(result1.insertedId), collection.create({
-            _id        : result1.insertedId,
+            _id: result1.insertedId,
             subdocument: {a: 1},
-            message    : "upsert 2"
+            message: 'upsert 2'
         }));
 
         var result3 = collection.upsert({
-            "subdocument.a.b": 1,
-            "subdocument.c"  : 2
+            'subdocument.a.b': 1,
+            'subdocument.c': 2
         }, {
-            $set: {message: "upsert3"}
+            $set: {message: 'upsert3'}
         });
 
         test.equal(collection.findOne(result3.insertedId), collection.create({
-            _id        : result3.insertedId,
+            _id: result3.insertedId,
             subdocument: {a: {b: 1}, c: 2},
-            message    : "upsert3"
+            message: 'upsert3'
         }));
 
         var result4 = collection.upsert({
-            "subdocument.a": 4
+            'subdocument.a': 4
         }, {
-            $set: {"subdocument.a": "upsert 4"}
+            $set: {'subdocument.a': 'upsert 4'}
         });
 
         test.equal(collection.findOne(result4.insertedId), collection.create({
-            _id        : result4.insertedId,
-            subdocument: {a: "upsert 4"}
+            _id: result4.insertedId,
+            subdocument: {a: 'upsert 4'}
         }));
 
         var result5 = collection.upsert({
-            "subdocument.a": "upsert 4"
+            'subdocument.a': 'upsert 4'
         }, {
-            $set: {"subdocument.a": "upsert 5"}
+            $set: {'subdocument.a': 'upsert 5'}
         });
 
         test.equal(result5, {numberAffected: 1});
 
         test.equal(collection.findOne(result4.insertedId), collection.create({
-            _id        : result4.insertedId,
-            subdocument: {a: "upsert 5"}
+            _id: result4.insertedId,
+            subdocument: {a: 'upsert 5'}
         }));
 
         var result6 = collection.upsert({
-            "subdocument.a": "upsert 5"
+            'subdocument.a': 'upsert 5'
         }, {
-            $set: {"subdocument": "upsert 6"}
+            $set: {'subdocument': 'upsert 6'}
         });
 
         test.equal(result6, {numberAffected: 1});
 
         test.equal(collection.findOne(result4.insertedId), collection.create({
-            _id        : result4.insertedId,
-            subdocument: "upsert 6"
+            _id: result4.insertedId,
+            subdocument: 'upsert 6'
         }));
 
         var result7 = collection.upsert({
-            "subdocument.a.b": 7
+            'subdocument.a.b': 7
         }, {
             $set: {
-                "subdocument.a.c": "upsert7"
+                'subdocument.a.c': 'upsert7'
             }
         });
 
         test.equal(collection.findOne(result7.insertedId), collection.create({
-            _id        : result7.insertedId,
+            _id: result7.insertedId,
             subdocument: {
-                a: {b: 7, c: "upsert7"}
+                a: {b: 7, c: 'upsert7'}
             }
         }));
 
         var result8 = collection.upsert({
-            "subdocument.a.b": 7
+            'subdocument.a.b': 7
         }, {
             $set: {
-                "subdocument.a.c": "upsert8"
+                'subdocument.a.c': 'upsert8'
             }
         });
 
         test.equal(result8, {numberAffected: 1});
 
         test.equal(collection.findOne(result7.insertedId), collection.create({
-            _id        : result7.insertedId,
+            _id: result7.insertedId,
             subdocument: {
-                a: {b: 7, c: "upsert8"}
+                a: {b: 7, c: 'upsert8'}
             }
         }));
 
         var result9 = collection.upsert({
-            "subdocument.a.b": 7
+            'subdocument.a.b': 7
         }, {
             $set: {
-                "subdocument.a.b": "upsert9"
+                'subdocument.a.b': 'upsert9'
             }
         });
 
         test.equal(result9, {numberAffected: 1});
 
         test.equal(collection.findOne(result7.insertedId), collection.create({
-            _id        : result7.insertedId,
+            _id: result7.insertedId,
             subdocument: {
-                a: {b: "upsert9", c: "upsert8"}
+                a: {b: 'upsert9', c: 'upsert8'}
             }
         }));
 
@@ -1582,7 +1571,7 @@ if (Meteor.isServer) {
 }
 
 
-Meteor.isServer && Tinytest.add("UniCollection - cursor dedup stop", function (test) {
+Meteor.isServer && Tinytest.add('UniCollection - cursor dedup stop', function () {
     var coll = new UniCollection(Random.id());
     _.times(100, function () {
         coll.insert({foo: 'baz'});
@@ -1600,20 +1589,20 @@ Meteor.isServer && Tinytest.add("UniCollection - cursor dedup stop", function (t
     // See https://github.com/meteor/meteor/issues/2070
 });
 
-testAsyncMulti("UniCollection - undefined find options", [
+testAsyncMulti('UniCollection - undefined find options', [
     function (test, expect) {
         var self = this;
         self.collName = Random.id();
         if (Meteor.isClient) {
-            Meteor.call("createInsecureCollection", self.collName);
-            Meteor.subscribe("c-" + self.collName, expect());
+            Meteor.call('createInsecureCollection', self.collName);
+            Meteor.subscribe('c-' + self.collName, expect());
         }
     },
     function (test, expect) {
         var self = this;
         self.coll = new UniCollection(self.collName);
-        self.doc = {foo: 1, bar: 2, _id: "foobar"};
-        self.coll.insert(self.doc, expect(function (err, id) {
+        self.doc = {foo: 1, bar: 2, _id: 'foobar'};
+        self.coll.insert(self.doc, expect(function (err) {
             test.isFalse(err);
         }));
     },
@@ -1621,16 +1610,17 @@ testAsyncMulti("UniCollection - undefined find options", [
         var self = this;
         var result = self.coll.findOne({foo: 1}, {
             fields: undefined,
-            sort  : undefined,
-            limit : undefined,
-            skip  : undefined
+            sort: undefined,
+            limit: undefined,
+            skip: undefined
         });
         checkDocument(test, result, self.doc);
+        expect();
     }
 ]);
 
 // Regression test for #2274.
-Meteor.isServer && testAsyncMulti("UniCollection - observe limit bug", [
+Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
     function (test, expect) {
         var self = this;
         self.coll = new UniCollection(Random.id());
@@ -1639,7 +1629,7 @@ Meteor.isServer && testAsyncMulti("UniCollection - observe limit bug", [
             changed: function (newDoc) {
                 state[newDoc._id] = newDoc;
             },
-            added  : function (newDoc) {
+            added: function (newDoc) {
                 state[newDoc._id] = newDoc;
             },
             removed: function (oldDoc) {
@@ -1674,36 +1664,40 @@ Meteor.isServer && testAsyncMulti("UniCollection - observe limit bug", [
             self.coll.remove({toDelete: true});
         });
         test.equal(_.keys(state), [self.id1]);
+
+        expect();
     }
 ]);
 
-Meteor.isServer && testAsyncMulti("UniCollection - update with replace forbidden", [
+Meteor.isServer && testAsyncMulti('UniCollection - update with replace forbidden', [
     function (test, expect) {
         var c = new UniCollection(Random.id());
 
-        var id = c.insert({foo: "bar"});
+        var id = c.insert({foo: 'bar'});
 
-        c.update(id, {foo2: "bar2"});
-        checkDocument(test, c.findOne(id), {_id: id, foo2: "bar2"});
-
-        test.throws(function () {
-            c.update(id, {foo3: "bar3"}, {_forbidReplace: true});
-        }, "Replacements are forbidden");
-        checkDocument(test, c.findOne(id), {_id: id, foo2: "bar2"});
+        c.update(id, {foo2: 'bar2'});
+        checkDocument(test, c.findOne(id), {_id: id, foo2: 'bar2'});
 
         test.throws(function () {
-            c.update(id, {foo3: "bar3", $set: {blah: 1}});
-        }, "cannot have both modifier and non-modifier fields");
-        checkDocument(test, c.findOne(id), {_id: id, foo2: "bar2"});
+            c.update(id, {foo3: 'bar3'}, {_forbidReplace: true});
+        }, 'Replacements are forbidden');
+        checkDocument(test, c.findOne(id), {_id: id, foo2: 'bar2'});
+
+        test.throws(function () {
+            c.update(id, {foo3: 'bar3', $set: {blah: 1}});
+        }, 'cannot have both modifier and non-modifier fields');
+        checkDocument(test, c.findOne(id), {_id: id, foo2: 'bar2'});
+
+        expect();
     }
 ]);
 
 if (Meteor.isServer) {
-    Tinytest.add("UniCollection - update/remove don't accept an array as a selector #4804", function (test) {
+    Tinytest.add('UniCollection - update/remove don\'t accept an array as a selector #4804', function (test) {
         var collection = new UniCollection(Random.id());
 
         _.times(10, function () {
-            collection.insert({data: "Hello"});
+            collection.insert({data: 'Hello'});
         });
 
         test.equal(collection.find().count(), 10);
@@ -1727,7 +1721,7 @@ if (Meteor.isServer) {
 // Prior to fixing the issue (but after applying
 // https://github.com/meteor/meteor/pull/4694), doing a Mongo write from a
 // timeout that ran after a method body (invoked via the client) would throw an
-// error "fence has already activated -- too late to add a callback" and not
+// error 'fence has already activated -- too late to add a callback' and not
 // properly call the Mongo write's callback.  In this test:
 //  - The client invokes a method (fenceOnBeforeFireError1) which
 //    - Starts an observe on a query
@@ -1744,7 +1738,7 @@ if (Meteor.isServer) {
 //    the future. (Well, the invocation happened earlier but the use of the
 //    Future sequences it so that the confirmation only gets read at this point.)
 if (Meteor.isClient) {
-    testAsyncMulti("UniCollection - fence onBeforeFire error", [
+    testAsyncMulti('UniCollection - fence onBeforeFire error', [
         function (test, expect) {
             var self = this;
             self.nonce = Random.id();
@@ -1763,7 +1757,7 @@ if (Meteor.isClient) {
         }
     ]);
 } else {
-    var fenceOnBeforeFireErrorCollection = new UniCollection("FOBFE");
+    var fenceOnBeforeFireErrorCollection = new UniCollection('FOBFE');
     var Future = Npm.require('fibers/future');
     var futuresByNonce = {};
     Meteor.methods({

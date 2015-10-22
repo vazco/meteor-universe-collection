@@ -56,13 +56,13 @@ if (Meteor.isServer) {
     });
 }
 Tinytest.add('UniCollection Schema - adds new schema', function (test) {
-    var coll = new UniCollection('coll_'+Random.id());
+    var coll = new UniCollection('coll_' + Random.id());
 
     coll.setSchema(new SimpleSchema({
         title: {type: String}
     }));
 
-    coll.setSchema('schema2',new SimpleSchema({
+    coll.setSchema('schema2', new SimpleSchema({
         title: {type: String}
     }));
 
@@ -72,17 +72,17 @@ Tinytest.add('UniCollection Schema - adds new schema', function (test) {
 });
 
 Tinytest.addAsync('UniCollection Schema - insert - default - negative test', function (test, onComplete) {
-    var collName = 'insert1n_'+Random.id();
+    var collName = 'insert1n_' + Random.id();
 
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, true);
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, true);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
     coll.setSchema(schema2);
-    coll.insert({title:'some'}, (err) => {
+    coll.insert({title: 'some'}, (err) => {
         test.isTrue(!!err);
-        if(Meteor.isClient) {
+        if (Meteor.isClient) {
             Meteor.subscribe('c-' + collName, () => {
                 test.equal(coll.find({aas: 2}).count(), 0);
                 onComplete();
@@ -96,15 +96,15 @@ Tinytest.addAsync('UniCollection Schema - insert - default - negative test', fun
 });
 
 Tinytest.addAsync('UniCollection Schema - insert - default - positive test', function (test, onComplete) {
-    var collName = 'insert1p_'+Random.id();
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, schema);
+    var collName = 'insert1p_' + Random.id();
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, schema);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
     coll.insert({title: 'alals'}, (err) => {
         test.isFalse(!!err);
-        if(Meteor.isClient) {
+        if (Meteor.isClient) {
             Meteor.subscribe('c-' + collName, () => {
                 test.equal(coll.find({title: 'alals'}).count(), 1);
                 onComplete();
@@ -117,17 +117,17 @@ Tinytest.addAsync('UniCollection Schema - insert - default - positive test', fun
 });
 
 Tinytest.addAsync('UniCollection Schema - insert - second schema - negative test', function (test, onComplete) {
-    var collName = 'insert2n_'+Random.id();
+    var collName = 'insert2n_' + Random.id();
 
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {});
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {});
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
-    coll.setSchema('schema2',schema2);
+    coll.setSchema('schema2', schema2);
     coll.insert({title: 'no'}, {useSchema: 'schema2'}, (err) => {
         test.isTrue(!!err);
-        if(Meteor.isClient) {
+        if (Meteor.isClient) {
             Meteor.subscribe('c-' + collName, () => {
                 test.equal(coll.find({title: 'no'}).count(), 0);
                 onComplete();
@@ -141,16 +141,16 @@ Tinytest.addAsync('UniCollection Schema - insert - second schema - negative test
 });
 
 Tinytest.addAsync('UniCollection Schema - insert - second schema - positive test', function (test, onComplete) {
-    var collName = 'insert2p_'+Random.id();
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, schema);
+    var collName = 'insert2p_' + Random.id();
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, schema);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
-    coll.setSchema('schema2',schema2);
+    coll.setSchema('schema2', schema2);
     coll.insert({cristo: 'rabani'}, {useSchema: 'schema2'}, (err) => {
         test.isFalse(!!err);
-        if(Meteor.isClient) {
+        if (Meteor.isClient) {
             Meteor.subscribe('c-' + collName, () => {
                 test.equal(coll.find({cristo: 'rabani'}).count(), 1);
                 onComplete();
@@ -163,17 +163,17 @@ Tinytest.addAsync('UniCollection Schema - insert - second schema - positive test
 });
 //--- updates
 Tinytest.addAsync('UniCollection Schema - update - default - negative test', function (test, onComplete) {
-    var collName = 'update1n_'+Random.id();
+    var collName = 'update1n_' + Random.id();
 
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, true);
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, true);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
     coll.setSchema('schema2', schema2);
     coll.insert({title: 'abc'}, (e, id) => {
         coll.update(id, {$set: {asf: 'negative'}}, () => {
-            if(Meteor.isClient) {
+            if (Meteor.isClient) {
                 Meteor.subscribe('c-' + collName, () => {
                     test.equal(coll.find({_id: id, asf: 'negative'}).count(), 0);
                     onComplete();
@@ -189,9 +189,9 @@ Tinytest.addAsync('UniCollection Schema - update - default - negative test', fun
 });
 
 Tinytest.addAsync('UniCollection Schema - update - default - positive test', function (test, onComplete) {
-    var collName = 'update1p_'+Random.id();
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, schema);
+    var collName = 'update1p_' + Random.id();
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, schema);
         Meteor.subscribe('c-' + collName);
     }
     var coll = new UniCollection(collName, {});
@@ -200,7 +200,7 @@ Tinytest.addAsync('UniCollection Schema - update - default - positive test', fun
     coll.insert({title: 'abc'}, (err, id) => {
         coll.update(id, {$set: {title: 'abc2'}}, (err) => {
             test.isFalse(!!err);
-            if(Meteor.isClient) {
+            if (Meteor.isClient) {
                 Meteor.subscribe('c-' + collName, () => {
                     test.equal(coll.find({_id: id, title: 'abc2'}).count(), 1);
                     onComplete();
@@ -215,17 +215,17 @@ Tinytest.addAsync('UniCollection Schema - update - default - positive test', fun
 });
 
 Tinytest.addAsync('UniCollection Schema - update - second schema - negative test', function (test, onComplete) {
-    var collName  = 'update2n_'+Random.id();
+    var collName = 'update2n_' + Random.id();
 
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, true);
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, true);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
     coll.setSchema('schema2', schema2);
     coll.insert({title: 'yes'}, (e, id) => {
-        coll.update(id, {$set: {title: 'abc'} }, {useSchema: 'schema2'}, () => {
-            if(Meteor.isClient) {
+        coll.update(id, {$set: {title: 'abc'}}, {useSchema: 'schema2'}, () => {
+            if (Meteor.isClient) {
                 Meteor.subscribe('c-' + collName, () => {
                     test.equal(coll.find({_id: id, title: 'abc'}).count(), 0);
                     onComplete();
@@ -241,16 +241,16 @@ Tinytest.addAsync('UniCollection Schema - update - second schema - negative test
 });
 
 Tinytest.addAsync('UniCollection Schema - update - second schema - positive test', function (test, onComplete) {
-    var collName = 'update2p_'+Random.id();
-    if(Meteor.isClient){
-        Meteor.call("createCollectionWithSchema", collName, {}, schema);
+    var collName = 'update2p_' + Random.id();
+    if (Meteor.isClient) {
+        Meteor.call('createCollectionWithSchema', collName, {}, schema);
     }
     var coll = new UniCollection(collName, {});
     coll.setSchema(schema);
     coll.setSchema('schema2', schema2);
-    coll.insert({ title: 'ala ma kota' }, (e, id) => {
-        coll.update(id, {$set: {cristo: 'rabani'} }, { useSchema: 'schema2' }, (err, res) => {
-            if(Meteor.isClient) {
+    coll.insert({title: 'ala ma kota'}, (e, id) => {
+        coll.update(id, {$set: {cristo: 'rabani'}}, {useSchema: 'schema2'}, () => {
+            if (Meteor.isClient) {
                 Meteor.subscribe('c-' + collName, () => {
                     test.equal(coll.find({_id: id, cristo: 'rabani'}).count(), 1);
                     onComplete();

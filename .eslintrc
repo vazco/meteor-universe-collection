@@ -51,7 +51,7 @@
         "array-bracket-spacing": [2, "never"],
         "computed-property-spacing": [2, "never"],
         "space-in-parens": [2, "never"],
-        "strict": [2, "global"],
+        "strict": 0,
         "wrap-iife": [2, "any"],
         "yoda": [1, "never"]
     },
@@ -62,6 +62,10 @@
         "UniCollection": true,
         "UniDoc": true,
         "UniUsers": true,
-        "UniUtils": false
+        "UniUtils": false,
+        "testAsyncMulti": false,
+        "SeededRandom": false,
+        "Base64": false,
+        "COLLECTIONS": true
     }
 }
