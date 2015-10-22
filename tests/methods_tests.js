@@ -63,9 +63,8 @@ Tinytest.addAsync('UniCollection - Remote Methods - collection', function (test,
     coll.call('getA', (e, name) => {
         test.isFalse(!!e);
         test.equal(name, collName);
+        onComplete();
     });
-
-    onComplete();
 });
 
 Tinytest.addAsync('UniCollection - Remote Methods - document', function (test, onComplete) {
