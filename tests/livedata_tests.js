@@ -1316,7 +1316,7 @@ testAsyncMulti('UniCollection - empty string _id', [
         var self = this;
         var docs = self.coll.find().fetch();
         test.equal(docs, [self.coll.create({_id: 'realid', f: 'bar'})]);
-        expect();
+        expect()();
     },
     function (test, expect) {
         var self = this;
@@ -1324,7 +1324,7 @@ testAsyncMulti('UniCollection - empty string _id', [
             self.coll._collection.insert({_id: '', f: 'baz'});
             test.equal(self.coll.find().fetch().length, 2);
         }
-        expect();
+        expect()();
     }
 ]);
 
@@ -1615,7 +1615,7 @@ testAsyncMulti('UniCollection - undefined find options', [
             skip: undefined
         });
         checkDocument(test, result, self.doc);
-        expect();
+        expect()();
     }
 ]);
 
@@ -1665,7 +1665,7 @@ Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
         });
         test.equal(_.keys(state), [self.id1]);
 
-        expect();
+        expect()();
     }
 ]);
 
@@ -1688,7 +1688,7 @@ Meteor.isServer && testAsyncMulti('UniCollection - update with replace forbidden
         }, 'cannot have both modifier and non-modifier fields');
         checkDocument(test, c.findOne(id), {_id: id, foo2: 'bar2'});
 
-        expect();
+        expect()();
     }
 ]);
 
