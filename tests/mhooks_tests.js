@@ -23,7 +23,7 @@ if (Meteor.isServer) {
                 doc.isGetCallback = typeof this.getCallback === 'function';
                 doc.isSetCallback = typeof this.setCallback === 'function';
                 if (doc.stop) {
-                    console.log('imh',doc);
+                    console.log('imh', doc);
                     return false;
                 }
                 if (doc.withCb) {
@@ -70,7 +70,7 @@ Tinytest.addAsync('UniCollection - Hooks collection and context', function (test
     });
 
     coll.allow({
-        getB : () => true,
+        getB: () => true,
         getAn: () => true
     });
     const p1 = 2, p2 = 3;

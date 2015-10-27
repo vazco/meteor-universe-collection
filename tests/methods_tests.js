@@ -47,7 +47,7 @@ Tinytest.addAsync('UniCollection - Remote Methods - collection', function (test,
     var collName = 'rm_' + Random.id();
 
     if (Meteor.isClient) {
-        Meteor.call("createCollectionWithRemote", collName, true);
+        Meteor.call('createCollectionWithRemote', collName, true);
     }
     var coll = new UniCollection(collName);
     coll.methods({
@@ -63,9 +63,8 @@ Tinytest.addAsync('UniCollection - Remote Methods - collection', function (test,
     coll.call('getA', (e, name) => {
         test.isFalse(!!e);
         test.equal(name, collName);
+        onComplete();
     });
-
-    onComplete();
 });
 
 Tinytest.addAsync('UniCollection - Remote Methods - document', function (test, onComplete) {
@@ -110,10 +109,11 @@ Tinytest.addAsync('UniCollection - Remote Methods - document', function (test, o
 
 Tinytest.addAsync('UniCollection - Remote Methods - without latency compensation', function (test, onComplete) {
     var collName = 'rm_' + Random.id();
+    var coll;
 
     if (Meteor.isClient) {
         Meteor.call('createCollectionWithRemote', collName, true);
-        var coll = new UniCollection(collName);
+        coll = new UniCollection(collName);
         coll.apply('getA', (e, name) => {
             test.isFalse(!!e);
             test.equal(name, collName);
@@ -139,10 +139,11 @@ Tinytest.addAsync('UniCollection - Remote Methods - without latency compensation
 
 Tinytest.addAsync('UniCollection - Remote Methods - trusted stack', function (test, onComplete) {
     var collName = 'rm_' + Random.id();
+    var coll;
 
     if (Meteor.isClient) {
         Meteor.call('createCollectionWithRemote', collName, true, true);
-        var coll = new UniCollection(collName);
+        coll = new UniCollection(collName);
         coll.apply('getA', (e) => {
             test.isTrue(!!e);
         });

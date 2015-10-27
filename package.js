@@ -52,8 +52,24 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
-    api.use(['meteor', 'mongo','minimongo','tinytest', 'underscore', 'test-helpers', 'universe:utilities@2.0.4',
-        'ejson', 'random', 'ddp', 'base64', 'ecmascript', 'check', 'universe:collection']);
+    api.use([
+        'meteor',
+        'es5-shim',
+        'mongo',
+        'minimongo',
+        'tinytest',
+        'underscore',
+        'test-helpers',
+        'universe:utilities@2.0.6',
+        'ejson',
+        'random',
+        'ddp',
+        'base64',
+        'ecmascript',
+        'check',
+        'universe:collection',
+        'aldeed:simple-schema@1.3.3'
+    ]);
     api.addFiles('tests/livedata_tests.js', ['client', 'server']);
     api.addFiles('tests/schema_tests.js', ['client', 'server']);
     api.addFiles('tests/methods_tests.js', ['client', 'server']);
