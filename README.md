@@ -74,6 +74,7 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
       - [admins only](#admins-only)
   - [Support for Universe modules](#support-for-universe-modules)
   - [Additional extensions for this package](#additional-extensions-for-this-package)
+  - [Integration with attendant third party packages](#integration-with-attendant-third-party-packages)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -963,6 +964,12 @@ import {UniCollection, UniUsers, UniDoc, UniUser, BackupMixin, PublishAccessMixi
 
 - [Universe Collection Links](https://atmospherejs.com/universe/collection-links)
 
+## Integration with attendant third party packages
+If you have problems with integration collection2 or collection-hooks
+
+check it out following package:
+
+[universe:fixes-for-third-party-packages](https://atmospherejs.com/universe/fixes-for-third-party-packages)
 
 Copyright and license
 Code and documentation © 2015 Vazco.eu
