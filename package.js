@@ -25,7 +25,7 @@ Package.onUse(function (api) {
     api.use([
         'accounts-base',
         'universe:modules@0.6.1',
-        'universe:aldeed-collection2-fixes'
+        'universe:fixes-for-third-party-packages@0.0.1'
     ], {weak: true});
 
     api.addFiles([
