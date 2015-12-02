@@ -3,7 +3,7 @@
 Package.describe({
     summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
-    version: '2.0.4',
+    version: '2.0.5',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -48,7 +48,8 @@ Package.onUse(function (api) {
         'mixins/ShowErrorMixin.js',
         'mixins/PublishAccessMixin.js'
     ]);
-    api.addFiles('lib/modules/Export.js');
+    api.addFiles('lib/integrations/Export.js');
+    api.addFiles('lib/integrations/problemsDetections.js', 'server');
     api.export([
         'UniCollection',
         'UniUsers'
