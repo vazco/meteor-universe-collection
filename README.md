@@ -447,7 +447,7 @@ You can use Collection.helpers method to register new methods to objects.
     Colls.Books = new UniCollection('Books');
 
     //Adding methods to documents
-    Colls.Books.helpers({
+    Colls.Books.docHelpers({
         read: function(){
             this.isReaded = true;
             this.save();
