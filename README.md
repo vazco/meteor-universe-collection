@@ -826,7 +826,11 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
    Checks if document belongs to UniUsers collection
 
    (on client side you must have this doc in minimongo [subscription needed])
-
+   
+- `UniUsers.runWithUser = (userId, func, args, context)` (server only)
+   
+   Adds a posibility of run function on server side as a user.
+   So, UniUsers.getLoggedIn() and UniUsers.getLoggedInId() will be working correctly.
 
 ## Documents methods on user object
 
