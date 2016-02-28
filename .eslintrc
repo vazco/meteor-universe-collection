@@ -13,7 +13,7 @@
     "extends": "eslint:recommended",
     "rules": {
         "arrow-spacing": [2, {"before": true, "after": true}],
-        "no-bitwise": 2,
+        "no-bitwise": 0,
         "no-class-assign": 2,
         "no-console": 0,
         "no-const-assign": 2,
