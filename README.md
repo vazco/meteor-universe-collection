@@ -196,25 +196,25 @@ but default sort option are used only when someone call find without sort option
     Colls.Books.setDefaultSort({ title: 1 })
 ```
 
-- `ensureUniDoc(docOrId, pattern=this.matchingDocument(), errorMessage=)`
+- `ensureUniDoc(docOrId, additionalPattern, errorMessage=)`
 
+This method gives warranty that returned object is document of current collection
+but if this method cannot return a proper document it will throw error
+You can provide additional Match.* patterns as a supplement of this.matchingDocument()
+- `docOrId` {UniCollection.UniDoc|String|*} document or id of available document that satisfies pattern
+- `additionalPattern` {Object=} Additional regiments that mast be checked.
+If true is passed under this argument, then this method will fetch fresh data even if document is correct.
+- `errorMessage` {String=undefined} Custom message of error
 Ensures that returned document is matched against pattern.
 
-It accepts document but also id of existing document.
-
-If the match fails, ensureUniDoc throws a Match.Error
-
-but if you set a custom `errorMessage` the Meteor.Error will be thrown, instead.
 
 ```js
     var book = Colls.Books.ensureUniDoc(book);
     var book =  Colls.Books.ensureUniDoc(bookId);
 ```
-As a default matcher is used If pattern was not set as a default will be used this.matchingDocument()
 
-but you can precise the pattern by passing patterns for fields to the this.matchingDocument().
-
-And even you can use every (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
+This function works on top of meteor match and can be safely used with `audit-argument-checks` package
+More: (meteor match patterns)[http://docs.meteor.com/#matchpatterns]
 
 
 - `matchingDocument(keysPatterns=)`
@@ -511,8 +511,8 @@ sync hooks: 'find','findOne','setSchema','create'
 with async support: 'insert','update','remove', 'upsert'
 hooks can be added for all remote methods on collection and documents
 
-- `onBeforeCall(hookName, idName, method, isOverride=false)`
-- `onAfterCall(hookName, idName, method, isOverride=false)`
+- `onBeforeCall(hookName [, idName], method, isOverride=false)`
+- `onAfterCall(hookName [, idName], method, isOverride=false)`
 
 Removing unnecessary hooks
 - `offBeforeCall(hookName, idName)`
@@ -567,16 +567,28 @@ Helpers
 - `getMethodContext()` Context of method for which is hook
 - `callDirect()` Direct access to method (without any hooks)
 - `isAfter()` It tells if hook is after or before
-
-properties
 - `currentHookId` current idName of hook
-- `return` - return value (available for after hooks)
 
 Available only in before hooks, that can be potentially async methods (like insert/update/remove)
 - `getCallback()` It returns callback function if exists
 - `setCallback()` It sets new callback for async method
 
-#### Useful helpers in UniUtils (in package: universe:utilities)
+Available only in after hooks
+- `getResult()`  gives returned value of executed method
+
+** Specific Helpers **
+
+Some of functions like update, upsert, have a additional special helpers in context.
+
+- `getPreviousDocs()` is available for hooks of update, upsert and remove
+This method returns all documents that are selected by selector to current action.
+- `getFields()`  is available for hooks of update and upsert methods
+And returns an array of top level fields, which will be changed by modificator.
+- `getPreviousDoc()` is available for hooks of all remote methods attached to the document.
+Returns fetched document, that is bound with method.
+
+
+#### Additional useful helpers in UniUtils (in package: universe:utilities)
 
 - `UniUtils.getFieldsFromUpdateModifier(modifier)`
 Gets array of top-level fields, which will be changed by modifier (this from update method)
@@ -584,17 +596,23 @@ Gets array of top-level fields, which will be changed by modifier (this from upd
 Gets simulation of new version of document passed as a second argument
 
 ### Direct call without hooks
-All direct method for collection are available in `collection.direct`
-For documents in `collection.direct.doc`.
-In context of hook handler is `this.call Direct()`, which gives possibility of circumventing hooks to method,
-for which is current hook.
+Any call of method inside of `collection.withoutHooks(function, list)`, will be called (as a default) without hooks. 
+You can pass a list of hooks that should be omitted. 
+Some special words can deactivate group of hooks like BEFORE, AFTER or ALL (what is default)
+
+Example:
+```
+myCollection.withoutHooks(function () {
+     myCollection.update('abc234', {$set: {title: 'Updated without hooks!'}})
+});
+```
 
 ### Arguments passed to hook
 Hook handler has the same parameter as are passed for method.
 Only callbacks passed as last argument are provided by this.getCallback() instead of be in arguments.
 
 ```
-collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier, options){
+collection.onBeforeCall('update', 'argumentsLogger', function(selector, modifier, options) {
    console.log('argumentsLogger', selector, modifier, options).
 });
 ```

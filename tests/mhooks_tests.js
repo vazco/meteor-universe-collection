@@ -31,7 +31,9 @@ if (Meteor.isServer) {
                 }
             });
             c.onAfterCall('insert', 'myInsert', function () {
-                this.callDirect({_id: 'eq12'});
+                c.withoutHooks(function(){
+                    c.insert({_id: 'eq12'});
+                });
             });
 
             withAllow && c.allow({
@@ -77,7 +79,6 @@ Tinytest.addAsync('UniCollection - Hooks collection and context', function (test
 
     coll.onBeforeCall('getAn', 'geta', function (a1, a2) {
         test.equal(this.currentHookId, 'geta');
-        test.equal(typeof this.callDirect, 'function');
         test.equal(a1, p1);
         test.equal(a2, p2);
         test.isFalse(this.isAfter());
