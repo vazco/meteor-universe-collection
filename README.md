@@ -7,7 +7,7 @@ or by preparing own class inherited from UniCollection.UniDoc.
 
 > *Current version is for Meteor 1.3*
 
-> *For Meteor 1.2 please install last version of 1.2.x*
+> *For Meteor 1.2 please install last version of 2.2.x*
 
 All documents know to what collection, belong.
 In simple way you can get collection from document and even make update like this:
