@@ -116,7 +116,7 @@ Function passed as an argument will be executed for each document
 to transform selected documents before the method (like: find, findOne) returns them.
 
 UniDoc is a default of document prototype.
-(You can also pass it in collection constructor in options as a key 'documentPrototype')
+(You can also pass it in collection constructor in options as a key 'setDocumentClass')
 
 
 ```js
@@ -129,7 +129,7 @@ UniDoc is a default of document prototype.
     myDocProto.prototype.getTitleUppercase = function(){ return this.title.toLocaleUpperCase(); }
 
     //setting new prototype to collection
-    collection.setDocumentPrototype(myDocProto);
+    collection.setDocumentClass(myDocProto);
 
     var docInstance = collection.findOne();
     console.log(docInstance.getTitleUppercase());
@@ -147,7 +147,7 @@ Documents helpers did not depend from transformationObject.
 
 ```js
     var collection = new UniCollection('some');
-    collection.helpers({
+    collection.docHelpers({
           getTitleUppercase: function(){
                 return this.title.toLocaleUpperCase();
           }
