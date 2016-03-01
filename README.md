@@ -13,7 +13,7 @@ Features:
 - Mixins for collection
 - Compatibility with argument-audits-check
 - Allow/Deny for any rpc methods (not only insert/update/remove)
-- 
+
 And many other useful stuff
 
 > *Current version is for Meteor 1.3*
