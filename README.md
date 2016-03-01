@@ -107,7 +107,7 @@ Universe collection (as opposed to Meteor Collection) always must have name.
 If you want create a local collection please pass in options property: `connection: null`, instead null as a first parameter
 
 ### Methods on collection object
-- `setDocumentPrototype(transformationObject)`
+- `setDocumentClass(transformationObject)`
 
 Sets transformation function for collection.
 
@@ -139,7 +139,7 @@ UniDoc is a default of document prototype.
 
 Using this method you can add new helpers function into document prototype.
 
-It's alternative way to setDocumentPrototype.
+It's alternative way to setDocumentClass.
 
 All of this methods will be added to returned document by function find, findOne.
 
