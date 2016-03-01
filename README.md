@@ -1,9 +1,20 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
 # Universe Collection
-##### ( extension of Mongo.Collection ) #####
 Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
+
+Features:
+- Remote (RPC) methods od document and collections
+- Multi Schemas support
+- Hooks for many methods (e.g. insert, update, remove, own rpc methods etc.)
+- Document Helpers (like update from doc, doc.save(), user.getName())
+- EJSON serialization of documents
+- Mixins for collection
+- Compatibility with argument-audits-check
+- Allow/Deny for any rpc methods (not only insert/update/remove)
+- 
+And many other useful stuff
 
 > *Current version is for Meteor 1.3*
 
