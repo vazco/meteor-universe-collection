@@ -429,6 +429,10 @@ It mean that one function on server side calls another, "allow/deny" validation 
     collection.call('getY', function(error, result){ console.log(error, result); });
 ```
 
+Take a look that rules for Allow/Deny can be added only when method for given rule is already created for universe collection or document.
+
+So, you cannot set rules allow or deny before `collection.methods`, or `collection.docMethods`.
+
 ### Remote methods on document
 You can define methods that will be available to invoke over the network from document instance.
 
