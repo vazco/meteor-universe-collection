@@ -441,13 +441,15 @@ Works in the same way as collection.methods but additionally handler will be hav
 ```js
     var collection = new UniCollection('some');
     collection.docMethods({
-        addItem: function(item){
+        addItem: function(item) {
+            console.log('Called from doc: ', this.document._id);
             return this.document.update({$set: {item: item}});
         }
     });
     //also you can provide callbacks for deny function
     collection.allow({
-        addItem: function(userId, document, args, invocation){
+        addItem: function(userId, document, args, invocation) {
+            check(args, [String]);
             return true;
         }
     });
@@ -595,7 +597,7 @@ Available only in before hooks, that can be potentially async methods (like inse
 Available only in after hooks
 - `getResult()`  gives returned value of executed method
 
-** Specific Helpers **
+**Specific Helpers**
 
 Some of functions like update, upsert, have a additional special helpers in context.
 
