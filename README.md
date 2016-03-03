@@ -154,7 +154,7 @@ It's alternative way to setDocumentClass.
 
 All of this methods will be added to returned document by function find, findOne.
 
-Documents helpers did not depend from transformationObject.
+Documents helpers did not depend from transformationObject. *Details you can find in helpers section.*
 
 ```js
     var collection = new UniCollection('some');
@@ -501,6 +501,9 @@ Inheritance takes place by  calling extend() method on other UniDoc object
 
     Colls.Books.setConstructor(YourDocProto);
 ```
+
+Note that: Methods added by docHelpers methods always are on the top of inheritance.
+You can change object class for document but methods added by docHelpers always are accesible. 
 
 ### Example use within a blaze template
 
