@@ -1,7 +1,7 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
 # Universe Collection
-Universe Collections allows you to extend Meteor Collections by allowing you to define your own remote collection methods, add document.
+Universe Collections allows you to extend Meteor Collections by allowing you to define your own remote collection methods, add document helpers using a simple helpers method, and by creating new classes inherited from UniCollection.UniDoc.
 
 Features:
 - Remote (RPC) methods od document and collections
