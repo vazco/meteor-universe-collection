@@ -3,6 +3,7 @@
 # Universe Collection
 Collections on steroids, you can defined own remote methods, documents helpers by adding its using simple helpers method,
 or by preparing own class inherited from UniCollection.UniDoc.
+Universe Collections allows you to extend Meteor Collections by allowing you to define your own remote collection methods, add document.
 
 Features:
 - Remote (RPC) methods od document and collections
