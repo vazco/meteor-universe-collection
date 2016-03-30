@@ -91,21 +91,25 @@ class BackupMixin extends UniCollection.AbstractMixin {
             collection.call('restore', selector, options);
         };
 
-        collection.onBeforeCall('remove', 'backup', (id) => {
-            if (this.backupOnRemove) {
-                collection.backup(id);
-            }
-        });
+        if (Meteor.isServer) {
+            const remove = collection._collection.remove;
+            const self = this;
+            collection._collection.remove = function () {
+                if (self.backupOnRemove) {
+                    collection.backup.apply(self, arguments);
+                }
+                return remove.apply(self, arguments);
+            };
+        }
     }
 
     backup (collection, selector = {}) {
-        collection.find(selector).forEach((document) => {
-            const object = document.toJSONValue();
+        collection.find(selector, {transform: null}).forEach(document => {
 
             collection.backupCollection.upsert(document._id, {
-                ...object,
+                ...document,
                 _backupDate: new Date()
-            });
+            }, {validate: false});
         });
     }
 
@@ -113,21 +117,27 @@ class BackupMixin extends UniCollection.AbstractMixin {
         removeOnRestore = this.removeOnRestore,
         upsertOnRestore = this.upsertOnRestore
     } = {}) {
+        if (Meteor.isClient) {
+            return true;
+        }
+
+        const rawCollection = collection.rawCollection();
+        const insert = Meteor.wrapAsync(rawCollection.insert, rawCollection);
+        const update = Meteor.wrapAsync(rawCollection.update, rawCollection);
         collection.backupCollection.find(selector, {
             fields: {
                 _backupDate: false
-            }
-        }).forEach((document) => {
-            var object = document.toJSONValue();
-
+            },
+            transform: null
+        }).forEach(document => {
             if (upsertOnRestore) {
-                collection.upsert(object._id, object);
+                update({_id: document._id}, {$set: document}, {upsert: true});
             } else {
-                collection.insert(object);
+                insert(document);
             }
 
             if (removeOnRestore) {
-                document.remove();
+                collection.backupCollection.remove({_id: document._id});
             }
         });
     }
