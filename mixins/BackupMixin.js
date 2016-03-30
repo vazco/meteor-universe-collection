@@ -96,7 +96,10 @@ class BackupMixin extends UniCollection.AbstractMixin {
             const self = this;
             collection._collection.remove = function () {
                 if (self.backupOnRemove) {
-                    collection.backup.apply(self, arguments);
+                    const args = arguments;
+                    UniCollection._lastMethod.withValue('remove', function () {
+                        collection.backup.apply(self, args);
+                    });
                 }
                 return remove.apply(self, arguments);
             };
