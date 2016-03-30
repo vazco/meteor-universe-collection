@@ -1,0 +1,16 @@
+{
+  "name": "meteor-universe-collection",
+  "private": true,
+  "version": "2.3.2",
+  "scripts": {
+    "test": "npm run lint && npm run spacejam",
+    "lint": "eslint .",
+    "spacejam": "spacejam test-packages ./"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^1.x",
+    "eslint-plugin-babel": "^3.x",
+    "spacejam": "^1.x"
+  }
+}
