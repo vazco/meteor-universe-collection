@@ -11,6 +11,7 @@
   "devDependencies": {
     "eslint": "^1.x",
     "eslint-plugin-babel": "^3.x",
+    "eslint-plugin-react": "^4.2.3",
     "spacejam": "^1.x"
   }
 }
