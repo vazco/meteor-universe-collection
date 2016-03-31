@@ -31,7 +31,7 @@ if (Meteor.isServer) {
                 }
             });
             c.onAfterCall('insert', 'myInsert', function () {
-                c.withoutHooks(function(){
+                c.withoutHooks(function () {
                     c.insert({_id: 'eq12'});
                 });
             });

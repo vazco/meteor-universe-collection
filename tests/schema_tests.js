@@ -250,7 +250,7 @@ Tinytest.addAsync('UniCollection Schema - update - second schema - positive test
     coll.setSchema('schema2', schema2);
     coll.insert({title: 'ala ma kota'}, (e, id) => {
         const value = 'rabani_' + (Meteor.isClient? 'client': 'server');
-        coll.update(id, {$set: {cristo: value}}, {useSchema: 'schema2'}, (e) => {
+        coll.update(id, {$set: {cristo: value}}, {useSchema: 'schema2'}, () => {
             if (Meteor.isClient) {
                 Meteor.subscribe('c-' + collName, () => {
                     test.equal(coll.find({_id: id, cristo: value}).count(), 1);
