@@ -3,7 +3,7 @@
 Package.describe({
     summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
-    version: '2.2.2',
+    version: '2.2.3',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -18,7 +18,7 @@ Package.onUse(function (api) {
         'underscore',
         'mongo',
         'minimongo',
-        'universe:utilities@2.2.2',
+        'universe:utilities@2.3.2',
         'aldeed:simple-schema@1.5.3'
     ]);
 
