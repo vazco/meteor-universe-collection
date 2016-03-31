@@ -56,10 +56,8 @@ class BackupMixin extends UniCollection.AbstractMixin {
                 }, {
                     expireAfterSeconds: this.expireAfter
                 });
-            } else {
-                if (collection.backupCollection.getMongoIndexFromUniverseRegistry('_backupDate')){
-                    collection.backupCollection.dropMongoIndex('_backupDate');
-                }
+            } else if (collection.backupCollection.getMongoIndexFromUniverseRegistry('_backupDate')) {
+                collection.backupCollection.dropMongoIndex('_backupDate');
             }
         }
 
