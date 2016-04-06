@@ -81,7 +81,7 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
 ## Installation
 
 ```sh
-    $ meteor add vazco:universe-collection
+    $ meteor add universe:collection
 ```
 
 ### How to use
