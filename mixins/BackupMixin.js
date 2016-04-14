@@ -26,7 +26,7 @@
  * collection.restore();      // all documents are copied to collection
  * collection.find().count(); // 3
  */
-class BackupMixin extends UniCollection.AbstractMixin {
+BackupMixin = class BackupMixin extends UniCollection.AbstractMixin {
     constructor ({
         name = 'Backup',
         expireAfter = false,

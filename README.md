@@ -86,7 +86,6 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
     - [Accessibility for users](https://github.com/vazco/meteor-universe-collection/#accessibility-for-users)
       - [users only](https://github.com/vazco/meteor-universe-collection/#users-only)
       - [admins only](https://github.com/vazco/meteor-universe-collection/#admins-only)
-  - [Support for Universe modules](https://github.com/vazco/meteor-universe-collection/#support-for-universe-modules)
   - [Additional extensions for this package](https://github.com/vazco/meteor-universe-collection/#additional-extensions-for-this-package)
   - [Integration with attendant third party packages](https://github.com/vazco/meteor-universe-collection/#integration-with-attendant-third-party-packages)
 
@@ -1002,7 +1001,7 @@ UniCollection.publish('example', function() {
 # Support for Universe modules
 
 ```
-import {UniCollection, UniUsers, UniDoc, UniUser, BackupMixin, PublishAccessMixin} from '{universe:collection}';
+import {UniCollection, UniUsers, UniDoc, UniUser, BackupMixin, PublishAccessMixin} from 'meteor/universe:collection';
 ```
 
 ## Additional extensions for this package

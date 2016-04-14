@@ -1,7 +1,7 @@
 'use strict';
 let unnamed = 0;
 
-class AbstractMixin {
+AbstractMixin = class AbstractMixin {
     constructor (name) {
         if (typeof this.mount !== 'function') {
             throw new TypeError('this.mount(collection, options) method must be implemented');
@@ -13,7 +13,7 @@ class AbstractMixin {
             Meteor._debug && Meteor._debug('UniCollection mixin should have name, temporally named as:', this.name);
         }
     }
-}
+};
 
 UniCollection.AbstractMixin = AbstractMixin;
 
