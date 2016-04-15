@@ -48,8 +48,6 @@ class BackupMixin extends UniCollection.AbstractMixin {
     mount (collection) {
         collection.backupCollection = new UniCollection(collection.getCollectionName() + this.name);
         collection.backupCollection.create = collection.create.bind(collection);
-        collection.backupCollection._validators = collection._validators;
-        collection.backupCollection._universeValidators = collection._universeValidators;
 
         if (Meteor.isServer) {
             if (this.expireAfter) {
@@ -58,7 +56,7 @@ class BackupMixin extends UniCollection.AbstractMixin {
                 }, {
                     expireAfterSeconds: this.expireAfter
                 });
-            } else {
+            } else if (collection.backupCollection.getMongoIndexFromUniverseRegistry('_backupDate')) {
                 collection.backupCollection.dropMongoIndex('_backupDate');
             }
         }
@@ -92,13 +90,16 @@ class BackupMixin extends UniCollection.AbstractMixin {
         };
 
         if (Meteor.isServer) {
-            const remove = collection._collection.remove;
+            const removeIt = collection._collection.remove;
             const self = this;
             collection._collection.remove = function () {
                 if (self.backupOnRemove) {
-                    collection.backup.apply(self, arguments);
+                    const args = arguments;
+                    UniCollection._lastMethod.withValue('remove', function () {
+                        collection.backup.apply(self, args);
+                    });
                 }
-                return remove.apply(self, arguments);
+                return removeIt.apply(self, arguments);
             };
         }
     }
