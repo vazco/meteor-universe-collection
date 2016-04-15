@@ -1,36 +1,34 @@
 <a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
 
 # Universe Collection
-Universe Collections allows you to extend Meteor Collections by allowing you to define your own remote collection methods, add document helpers using a simple helpers method, and by creating new classes inherited from UniCollection.UniDoc.
+Universe Collections allows you to extend Meteor's [Mongo.Collection](http://docs.meteor.com/#/full/mongo_collection) functionality by allowing you to define your own remote collection methods, add document helpers using a simple helpers method, and create new classes inherited from UniCollection.UniDoc.
 
 Features:
-- Remote (RPC) methods od document and collections
-- Multi Schemas support
-- Hooks for many methods (e.g. insert, update, remove, own rpc methods etc.)
-- Document Helpers (like update from doc, doc.save(), user.getName())
+- Remote (RPC) methods on documents and collections
+- Multi-schema support
+- Hooks for many methods (e.g. insert, update, remove, your own rpc methods, etc.)
+- Document helpers (e.g. update from doc, doc.save(), user.getName())
 - EJSON serialization of documents
-- Mixins for collection
+- Mixins for collections
 - Compatibility with argument-audits-check
-- Allow/Deny for any rpc methods (not only insert/update/remove)
+- Allow/Deny for any rpc methods (not just insert/update/remove)
 
-And many other useful stuff
+And many more useful features.
 
-> *Current version is for Meteor 1.3*
+> *The current version supports Meteor 1.3*
 
-> *For Meteor 1.2 please install last version of 2.2.x*
+> *To use Meteor 1.2 please install the last version of 2.2.x*
 
-All documents know to what collection, belong.
-In simple way you can get collection from document and even make update like this:
+All documents know what collection they belong to and you can easily get a collection from any document as well as make a document update like this:
 
 ```js
 doc.update({$set: {title: 'new title'}});
 doc.call('addItem', item);
 ```
 
-And because this are EJSONable document types, you can use them for example with Session and ReactiveDict.
+Becase this is an EJSONable document type, you can use them with Meteor's built-in Session and ReactiveDict features.
 
-UniCollection inherits from Mongo.Collection, but does not change original Mongo.Collection.
-SimpleSchema integration allows you to attach a schemas to collection and validates against chosen (or default) schema.
+UniCollection inherits from Mongo.Collection, but does not change the original Mongo.Collection code. The SimpleSchema integration allows you to attach a schema to your collection and validate against your chosen (or a default) schema.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -99,8 +97,8 @@ SimpleSchema integration allows you to attach a schemas to collection and valida
 
 ### How to use
 
-#### Creating collection
-Instead of using standard:
+#### Creating a collection
+Instead of using the Meteor standard:
 
 ```js
 Colls.Books = new Mongo.Collection('Books');
@@ -112,17 +110,12 @@ use this:
  Colls.Books = new UniCollection('Books');
 ```
 
-Universe collection (as opposed to Meteor Collection) always must have name.
-If you want create a local collection please pass in options property: `connection: null`, instead null as a first parameter
+A Universe collection, unlike a Meteor Collection, must alway have name. If you want to create a local collection please pass in an options property: `connection: null`, instead of null as the first parameter.
 
-### Methods on collection object
+### Methods on a collection object
 - `setDocumentClass(transformationObject)`
 
-Sets transformation function for collection.
-
-Function passed as an argument will be executed for each document
-
-to transform selected documents before the method (like: find, findOne) returns them.
+This sets a transformation function for collection. The function is passed as an argument and will be executed for each document to transform the selected documents before the method (such as: find, findOne) returns the document.
 
 UniDoc is a default of document prototype.
 (You can also pass it in collection constructor in options as a key 'setDocumentClass')
@@ -146,13 +139,7 @@ UniDoc is a default of document prototype.
 
 - `docHelpers(objectWithMethods)`
 
-Using this method you can add new helpers function into document prototype.
-
-It's alternative way to setDocumentClass.
-
-All of this methods will be added to returned document by function find, findOne.
-
-Documents helpers did not depend from transformationObject. *Details you can find in helpers section.*
+Using this method you can add new helpers function to the document prototype as an alternative to setDocumentClass. All of these methods will be added to the returned document by function find, findOne. Documents helpers do not depend on transformationObject. *You can find more details in the helpers section.*
 
 ```js
     var collection = new UniCollection('some');
@@ -166,7 +153,7 @@ Documents helpers did not depend from transformationObject. *Details you can fin
     console.log(docInstance.getTitleUppercase());
 ```
 
-- `create` Creates new instance of document for current collection. Create method accepts arguments rawDoc, options.
+- `create` Creates new instance of a document for the current collection. The create method accepts the arguments `rawDoc, options`.
 
 ```js
 // empty not saved instance of doc
@@ -174,7 +161,7 @@ Documents helpers did not depend from transformationObject. *Details you can fin
 // warning: some of methods cannot work properly without some fields
     console.log(docInstance.getCollectionName());
 ```
-You can pass a raw object of document and save it after or save it in the moment of creation by options parameter.
+You can pass a raw object document and either save it after the function returns or it at the moment of creation, by passing an options parameter.
 
 ```js
 //  not saved instance of doc
@@ -194,7 +181,6 @@ Rest things like userId, connection are same as handlers in Meteor.methods have.
 
 - `docMethods`
 Remote methods on document that can be invoked over the network by clients from document instance.
-
 
 - `hasDocument(docOrId)`
 
