@@ -142,6 +142,6 @@ BackupMixin = class BackupMixin extends UniCollection.AbstractMixin {
             }
         });
     }
-}
+};
 
 UniCollection.mixins.BackupMixin = BackupMixin;

@@ -9,9 +9,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^1.x",
+    "eslint": "^2.x",
+    "eslint-config-vazco": "^1.x",
+    "babel-eslint": "^6.x",
     "eslint-plugin-babel": "^3.x",
-    "eslint-plugin-react": "^4.2.3",
+    "eslint-plugin-react": "^5.x",
     "spacejam": "^1.x"
   }
 }
