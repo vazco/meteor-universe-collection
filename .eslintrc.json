@@ -1,0 +1,26 @@
+{
+    "env": {
+        "meteor": true
+    },
+    "extends": "vazco",
+    "rules": {
+        "no-bitwise": 0,
+        "max-len": 0
+    },
+    "globals": {
+        "AbstractMixin": true,
+        "UniUser": true,
+        "BackupMixin": true,
+        "LocalCollection": false,
+        "SimpleSchema": false,
+        "UniConfig": true,
+        "UniCollection": true,
+        "UniDoc": true,
+        "UniUsers": true,
+        "UniUtils": false,
+        "testAsyncMulti": false,
+        "SeededRandom": false,
+        "Base64": false,
+        "COLLECTIONS": true
+    }
+}
