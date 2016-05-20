@@ -5,7 +5,9 @@
     "extends": "vazco",
     "rules": {
         "no-bitwise": 0,
-        "max-len": 0
+        "max-len": 0,
+        "valid-jsdoc": 0,
+        "func-names": 0
     },
     "globals": {
         "AbstractMixin": true,
