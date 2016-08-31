@@ -3,8 +3,12 @@
 Package.describe({
     summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
-    version: '2.4.2',
+    version: '2.5.0',
     git: 'https://github.com/vazco/meteor-universe-collection'
+});
+
+Npm.depends({
+    mingo: '0.6.5'
 });
 
 Package.onUse(function (api) {
@@ -38,6 +42,7 @@ Package.onUse(function (api) {
         'lib/docPrototypes/UniUser.js',
         'lib/BasicSchema.js',
         'lib/UniSecure.js',
+        'lib/UniAggregate.js',
         'lib/UniHooks.js'
     ]);
 

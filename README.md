@@ -11,6 +11,7 @@ Features:
 - EJSON serialization of documents
 - Mixins for collections
 - Compatibility with argument-audits-check
+- **Aggregations on client and server**
 - Allow/Deny for any rpc methods (not just insert/update/remove)
 
 And many more useful features.
@@ -245,6 +246,41 @@ mechanism will drop the old index under name passed as first parameter to this f
 
 - `dropMongoIndex(indexName)`
 Drops the specified index from a collection.
+
+## Aggregations
+
+```
+const result = myUniCollection.aggregate([
+    {'$match': {age: 23}},
+    {'$group':{_id:'$student_id', score:{$min:'$score'}}},
+    {'$sort':{_id: 1, score: 1}}
+]);
+
+console.log(result);
+```
+
+### Server side
+Exposing .aggregate method on UniCollection instances.
+There is no oberserving support or reactivity built in on server side.
+
+### Client side
+Performs aggregation operation using the aggregation pipeline.
+Reactivity is based on observation matched elements from first step
+
+#### Client side aggregation operators
+- Pipeline Operators (`$group`, `$match`, `$project`, `$sort`, `$limit`, `$unwind`, `$skip`)
+- Group Operators (`$addToSet`, `$sum`, `$max`, `$min`, `$avg`, `$push`, `$first`, `$last`)
+- Projection Operators (`$elemMatch`, `$slice`)
+- Arithmetic Operators (`$add`, `$divide`, `$mod`, `$multiply`, `$subtract`)
+- Array Operators (`$size`)
+- Boolean Operators (`$and`, `$or`, `$not`)
+- Comparisons Operators (`$cmp`, `$gt`, `$gte`, `$lt`, `$lte`, `$ne`, `$nin`, `$in`)
+- Conditional Operators (`$cond`, `$ifNull`)
+- Date Operators (`$dayOfYear`, `$dayOfMonth`, `$dayOfWeek`, `$year`, `$month`, `$week`, `$hour`, `$minute`, `$second`, `$millisecond`, `$dateToString`)
+- Literal Operators (`$literal`)
+- Set Operators (`$setEquals`, `$setIntersection`, `$setDifference`, `$setUnion`, `$setIsSubset`, `$anyElementTrue`, `$allElementsTrue`)
+- String Operators (`$strcasecmp`, `$concat`, `$substr`, `$toLower`, `$toUpper`)
+- Variable Operators (`$map`, `$let`)
 
 ## Schemas
 
