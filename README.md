@@ -267,6 +267,10 @@ There is no oberserving support or reactivity built in on server side.
 Performs aggregation operation using the aggregation pipeline.
 Reactivity is based on observation matched elements from first step
 
+**Note:** If you want to use aggregation on client side
+You will need to install mingo (^0.7.0) in project.
+`npm install -save mingo`
+
 #### Client side aggregation operators
 - Pipeline Operators (`$group`, `$match`, `$project`, `$sort`, `$limit`, `$unwind`, `$skip`)
 - Group Operators (`$addToSet`, `$sum`, `$max`, `$min`, `$avg`, `$push`, `$first`, `$last`)
