@@ -3,7 +3,7 @@
 Package.describe({
     summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
-    version: '2.6.1',
+    version: '2.7.0',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
@@ -30,19 +30,8 @@ Package.onUse(function (api) {
     ], {weak: true});
 
     api.addFiles([
-        'lib/UniCollection.js',
-        'lib/UniCollectionSS.js',
-        'lib/UniMethods.js',
-        'lib/docPrototypes/UniDoc.js',
-        'lib/UniUsers.js',
-        'lib/docPrototypes/UniUser.js',
-        'lib/BasicSchema.js',
-        'lib/UniSecure.js',
-        'lib/UniAggregate.js',
-        'lib/UniHooks.js'
+        'index.js'
     ]);
-
-    api.addFiles(['lib/UniPublish.js', 'lib/UniMongoIndexes.js'], 'server');
 
     api.addFiles([
         'mixins/AbstractMixin.js',
@@ -50,6 +39,7 @@ Package.onUse(function (api) {
         'mixins/ShowErrorMixin.js',
         'mixins/PublishAccessMixin.js'
     ]);
+
     api.addFiles('lib/integrations/problemsDetections.js', 'server');
     api.export([
         'UniCollection',
@@ -59,6 +49,8 @@ Package.onUse(function (api) {
         'BackupMixin',
         'PublishAccessMixin'
     ]);
+
+    api.mainModule('lib/UniCollection.js');
 });
 
 Package.onTest(function (api) {
