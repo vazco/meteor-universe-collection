@@ -8,7 +8,7 @@ Package.describe({
 });
 
 Package.onUse(function (api) {
-    api.versionsFrom(['METEOR@1.3']);
+    api.versionsFrom(['METEOR@1.4']);
 
     api.use([
         'ejson',
@@ -26,6 +26,7 @@ Package.onUse(function (api) {
 
     api.use([
         'accounts-base',
+        'allow-deny',
         'universe:fixes-for-third-party-packages@0.0.1'
     ], {weak: true});
 
