@@ -23,7 +23,7 @@ if (Meteor.isServer) {
                 doc.isGetCallback = typeof this.getCallback === 'function';
                 doc.isSetCallback = typeof this.setCallback === 'function';
                 if (doc.stop) {
-                    console.log('imh', doc);
+                    console.log('imh', doc); // eslint-disable-line no-console
                     return false;
                 }
                 if (doc.withCb) {
