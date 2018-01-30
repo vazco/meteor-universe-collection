@@ -3,12 +3,12 @@
 Package.describe({
     summary: 'Remote method from doc & collection, helpers on document/user, own doc classes, Multischemas, Hooks',
     name: 'universe:collection',
-    version: '2.8.1',
+    version: '2.9.0',
     git: 'https://github.com/vazco/meteor-universe-collection'
 });
 
 Package.onUse(function (api) {
-    api.versionsFrom(['METEOR@1.4']);
+    api.versionsFrom(['METEOR@1.6.1']);
 
     api.use([
         'ejson',
