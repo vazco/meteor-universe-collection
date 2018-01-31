@@ -16,8 +16,8 @@ Features:
 
 And many more useful features.
 
-> *The current version supports Meteor 1.3*
-
+> *The current version supports Meteor 1.6.1*
+> *To use Meteor lower than 1.6.0 please install the last version of 2.8.x*
 > *To use Meteor 1.2 please install the last version of 2.2.x*
 
 All documents know what collection they belong to and you can easily get a collection from any document as well as make a document update like this:
