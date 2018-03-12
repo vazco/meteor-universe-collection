@@ -10,7 +10,6 @@ const supportedVersions = {
 
 let simpleSchemaVersion;
 try {
-    console.log('\n\n MY CODE IS RUNNING \n\n');
     simpleSchemaVersion = require('simpl-schema/package.json').version;
 } catch (e) {
     throw new Error(
