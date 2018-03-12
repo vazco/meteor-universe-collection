@@ -197,7 +197,7 @@ EJSON.addType('dog', function (o) {
 
 
 // Parameterize tests.
-_.each(['STRING', 'MONGO'], function (idGeneration) {
+['STRING', 'MONGO'].forEach(idGeneration => {
 
     var collectionOptions = {idGeneration: idGeneration};
 
@@ -209,7 +209,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 test.instanceOf(err, Error);
             };
 
-            _.each(['insert', 'remove', 'update'], function (op) {
+            ['insert', 'remove', 'update'].forEach(op => {
                 var arg = (op === 'insert' ? {} : 'bla');
                 var arg2 = {};
 
@@ -514,7 +514,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
             // Did we limit ourselves to one 'moved' message per change,
             // rather than O(results) moved messages?
-            _.each(max_counters, function (v, k) {
+            Object.keys(max_counters).forEach(k => {
                 test.isTrue(max_counters[k] >= counters[k], k);
             });
 
@@ -1024,7 +1024,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                     bothIds: 1
                 });
 
-            _.each(handlesToStop, function (h) {
+            handlesToStop.forEach(h => {
                 h.stop();
             });
             onComplete();
@@ -1112,7 +1112,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 // Runs a method and its stub which do some upserts. The method throws an error
 // if we don't get the right return values.
     if (Meteor.isClient) {
-        _.each([true, false], function (useUpdate) {
+        [true, false].forEach(useUpdate => {
             Tinytest.addAsync('UniCollection - ' + (useUpdate ? 'update ' : '') + 'upsert in method, ' + idGeneration, function (test, onComplete) {
                 var run = test.runId();
                 upsertTestMethodColl = new UniCollection(upsertTestMethod + '_collection_' + run, collectionOptions);
@@ -1238,16 +1238,16 @@ function functionChain2Insert (test, expect, coll, index) {
 }
 
 
-_.each({
+Object.entries({
     collectionInsert: collectionInsert,
     functionCallsInsert: functionCallsInsert,
     functionCalls3Insert: functionCalls3Inserts,
     functionChainInsert: functionChainInsert,
     functionChain2Insert: functionChain2Insert
-}, function (fn, name) {
-    _.each([1, 3], function (repetitions) {
-        _.each([1, 3], function (collectionCount) {
-            _.each(['STRING', 'MONGO'], function (idGeneration) {
+}).forEach(([name, fn]) => {
+    [1, 3].forEach(repetitions => {
+        [1, 3].forEach(collectionCount => {
+            ['STRING', 'MONGO'].forEach(idGeneration => {
 
                 testAsyncMulti('UniCollection - consistent _id generation ' + name + ', ' + repetitions + ' repetitions on ' + collectionCount + ' collections, idGeneration=' + idGeneration, [function (test, expect) {
                     var collectionOptions = {idGeneration: idGeneration};
@@ -1282,7 +1282,7 @@ _.each({
                     }
                 }, function (test, expect) {
                     // Run any registered cleanup functions (e.g. to drop collections)
-                    _.each(this.cleanups, function (cleanup) {
+                    this.cleanups.forEach(cleanup => {
                         cleanup(expect);
                     });
                 }]);
@@ -1703,7 +1703,7 @@ if (Meteor.isServer) {
         test.equal(collection.find().count(), 10);
 
         // Test several array-related selectors
-        _.each([[], [1, 2, 3], [{}]], function (selector) {
+        [[], [1, 2, 3], [{}]].forEach(selector => {
             test.throws(function () {
                 collection.remove(selector);
             });
