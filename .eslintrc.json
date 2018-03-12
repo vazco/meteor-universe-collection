@@ -14,7 +14,6 @@
         "UniUser": true,
         "BackupMixin": true,
         "LocalCollection": false,
-        "SimpleSchema": false,
         "UniConfig": true,
         "UniCollection": true,
         "UniDoc": true,

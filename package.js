@@ -9,6 +9,7 @@ Package.describe({
 
 Package.onUse(function (api) {
     api.versionsFrom(['METEOR@1.6.1']);
+    api.addFiles('check-dependencies.js');
 
     api.use([
         'ejson',
@@ -18,11 +19,8 @@ Package.onUse(function (api) {
         'underscore',
         'mongo',
         'minimongo',
-        'universe:utilities@2.3.2',
-        'aldeed:simple-schema@1.5.3'
+        'universe:utilities@2.3.2'
     ]);
-
-    api.imply('aldeed:simple-schema');
 
     api.use([
         'accounts-base',
@@ -55,6 +53,8 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
+    api.addFiles('check-dependencies.js');
+
     api.use([
         'meteor',
         'es5-shim',
@@ -70,8 +70,7 @@ Package.onTest(function (api) {
         'base64',
         'ecmascript',
         'check',
-        'universe:collection',
-        'aldeed:simple-schema@1.3.3'
+        'universe:collection'
     ]);
     api.addFiles('tests/livedata_tests.js', ['client', 'server']);
     api.addFiles('tests/schema_tests.js', ['client', 'server']);
