@@ -1,5 +1,16 @@
+sudo: required
 language: node_js
 node_js:
-  - "8"
+  - "0.10"
+  
 before_install:
-  - "curl https://install.meteor.com/ | sh"
+  - "curl -L https://git.io/ejPSng | /bin/sh"
+
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
