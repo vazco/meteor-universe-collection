@@ -1,11 +1,7 @@
-sudo: false
+sudo: sudo: required
 language: node_js
 node_js:
   - 8
-cache:
-   directories:
-      - node_modules
-      - $HOME/.meteor/
 
 before_install: 
   - if [[ `npm -v` != 5* ]]; then npm i -g npm@5; fi
