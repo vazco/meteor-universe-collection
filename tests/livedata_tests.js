@@ -1,4 +1,5 @@
 /*eslint no-inner-declarations:0 camelcase:0 */
+import {isObject} from '../lib/utils';
 
 // We keep track of the collections, so we can refer to them by name
 COLLECTIONS = {};
@@ -1174,7 +1175,7 @@ function collectionInsert (test, expect, coll /*, index*/) {
     var clientSideId = coll.insert({name: 'foo'}, expect(function (err1, id) {
         test.equal(id, clientSideId);
         var o = coll.findOne(id);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1188,7 +1189,7 @@ function functionCallsInsert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1203,7 +1204,7 @@ function functionCalls3Inserts (test, expect, coll, index) {
             test.equal(ids[i], stubId);
 
             var o = coll.findOne(stubId);
-            test.isTrue(_.isObject(o));
+            test.isTrue(isObject(o));
             test.equal(o.name, 'foo');
         }
     }));
@@ -1218,7 +1219,7 @@ function functionChainInsert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1232,7 +1233,7 @@ function functionChain2Insert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }

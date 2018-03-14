@@ -1,4 +1,6 @@
 'use strict';
+import {isObject} from '../lib/utils';
+
 /**
  * ShowErrorMixin
  * new ShowErrorMixin(params={})
@@ -37,7 +39,7 @@ class ShowErrorMixin extends UniCollection.AbstractMixin {
     }
 
     _showError(text) {
-        if (_.isObject(text)) {
+        if (isObject(text)) {
             text = text.reason || text.message;
         }
         if (typeof UniUI === 'object' && UniUI.setErrorMessage) {
