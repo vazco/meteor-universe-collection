@@ -71,7 +71,7 @@ var upsert = function (coll, useUpdate, query, mod, options, callback) {
     if (useUpdate) {
         if (callback)
             return coll.update(query, mod,
-                _.extend({upsert: true}, options),
+                Object.assign({upsert: true}, options),
                 function (err, result) {
                     callback(err, !err && {
                         numberAffected: result
@@ -79,7 +79,7 @@ var upsert = function (coll, useUpdate, query, mod, options, callback) {
                 });
         return {
             numberAffected: coll.update(query, mod,
-                _.extend({upsert: true}, options))
+                Object.assign({upsert: true}, options))
         };
     }
     return coll.upsert(query, mod, options, callback);
@@ -167,7 +167,7 @@ var Dog = function (name, color, actions) {
     self.name = name;
     self.actions = actions || [{name: 'wag'}, {name: 'swim'}];
 };
-_.extend(Dog.prototype, {
+Object.assign(Dog.prototype, {
     getName: function () {
         return this.name;
     },
@@ -246,7 +246,7 @@ EJSON.addType('dog', function (o) {
         var run = test.runId();
         var coll, coll2;
         if (Meteor.isClient) {
-            let unmanaged = _.extend({connection: null}, collectionOptions);
+            let unmanaged = Object.assign({connection: null}, collectionOptions);
             coll = new UniCollection('basics_coll_' + run, unmanaged); // local, unmanaged
             coll2 = new UniCollection('basics_coll2' + run, unmanaged); // local, unmanaged
         } else {
@@ -397,7 +397,7 @@ EJSON.addType('dog', function (o) {
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('fuzz' + run, _.extend({connection: null}, collectionOptions)); // local
+            coll = new UniCollection('fuzz' + run, Object.assign({connection: null}, collectionOptions)); // local
         } else {
             coll = new UniCollection('livedata_test_collection_' + run, collectionOptions);
         }
@@ -463,7 +463,7 @@ EJSON.addType('dog', function (o) {
                 return;
             }
 
-            var max_counters = _.clone(counters);
+            var max_counters = Object.assign({}, counters);
 
             finishObserve(function () {
                 var x, val;
@@ -530,7 +530,7 @@ EJSON.addType('dog', function (o) {
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('unmanaged' + run, _.extend({connection: null}, collectionOptions)); // local, unmanaged
+            coll = new UniCollection('unmanaged' + run, Object.assign({connection: null}, collectionOptions)); // local, unmanaged
         } else {
             coll = new UniCollection('stopHandleInCallback-' + run, collectionOptions);
         }
