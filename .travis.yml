@@ -3,9 +3,12 @@ language: node_js
 node_js:
   - 8
 
-before_install: 
+before_install:
   - if [[ `npm -v` != 5* ]]; then npm i -g npm@5; fi
   - curl https://install.meteor.com | /bin/sh
+
+before_script:
+  - npm i simpl-schema@1
 
 script:
   - npm run test
