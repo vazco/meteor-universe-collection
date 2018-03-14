@@ -1,5 +1,5 @@
 /*eslint no-inner-declarations:0 camelcase:0 */
-import {isObject} from '../lib/utils';
+import {isObject, times} from '../lib/utils';
 
 // We keep track of the collections, so we can refer to them by name
 COLLECTIONS = {};
@@ -349,7 +349,7 @@ EJSON.addType('dog', function (o) {
             return doc.x * 2;
         }, context), [2, 8]);
 
-        test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+        test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
             [4, 1]);
 
         expectObserve('', function () {
@@ -360,14 +360,14 @@ EJSON.addType('dog', function (o) {
         expectObserve('c(3,0,1)c(6,1,4)', function () {
             var count = coll.update({run: run}, {$inc: {x: 2}}, {multi: true});
             test.equal(count, 2);
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+            test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
                 [6, 3]);
         });
 
         expectObserve(['c(13,0,3)m(13,0,1)', 'm(6,1,0)c(13,1,3)',
             'c(13,0,3)m(6,1,0)', 'm(3,0,1)c(13,1,3)'], function () {
             coll.update({run: run, x: 3}, {$inc: {x: 10}}, {multi: true});
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+            test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
                 [13, 6]);
         });
 
@@ -1254,7 +1254,7 @@ Object.entries({
                     var collectionOptions = {idGeneration: idGeneration};
 
                     var cleanups = this.cleanups = [];
-                    this.collections = _.times(collectionCount, function () {
+                    this.collections = times(collectionCount, function () {
                         var collectionName = 'consistentid_' + Random.id();
                         if (Meteor.isClient) {
                             Meteor.call('createInsecureCollection', collectionName, collectionOptions);
@@ -1574,7 +1574,7 @@ if (Meteor.isServer) {
 
 Meteor.isServer && Tinytest.add('UniCollection - cursor dedup stop', function () {
     var coll = new UniCollection(Random.id());
-    _.times(100, function () {
+    times(100, function () {
         coll.insert({foo: 'baz'});
     });
     var handler = coll.find({}).observeChanges({
@@ -1697,7 +1697,7 @@ if (Meteor.isServer) {
     Tinytest.add('UniCollection - update/remove don\'t accept an array as a selector #4804', function (test) {
         var collection = new UniCollection(Random.id());
 
-        _.times(10, function () {
+        times(10, function () {
             collection.insert({data: 'Hello'});
         });
 
