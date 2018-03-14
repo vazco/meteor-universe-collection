@@ -1646,7 +1646,7 @@ Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
             self.id1 = self.coll.insert({sortField: 1, toDelete: true});
             self.id2 = self.coll.insert({sortField: 2, toDelete: true});
         });
-        test.equal(_.keys(state), [self.id2]);
+        test.equal(Object.keys(state), [self.id2]);
 
         // Mutate the one in the unpublished buffer and the one below the
         // buffer. Before the fix for #2274, this left the observe state machine in
@@ -1657,14 +1657,14 @@ Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
                 {$set: {toDelete: false}},
                 {multi: 1});
         });
-        test.equal(_.keys(state), [self.id2]);
+        test.equal(Object.keys(state), [self.id2]);
 
         // Now remove the one published document. This should slide up id1 from the
         // buffer, but this didn't work before the #2274 fix.
         runInFence(function () {
             self.coll.remove({toDelete: true});
         });
-        test.equal(_.keys(state), [self.id1]);
+        test.equal(Object.keys(state), [self.id1]);
 
         expect()();
     }
