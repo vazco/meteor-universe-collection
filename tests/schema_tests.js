@@ -1,3 +1,5 @@
+import SimpleSchema from 'simpl-schema';
+
 SimpleSchema.debug = true;
 var schema = {
     title: {type: String},
