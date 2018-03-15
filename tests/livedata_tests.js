@@ -1,4 +1,5 @@
 /*eslint no-inner-declarations:0 camelcase:0 */
+import {isObject, times} from '../lib/utils';
 
 // We keep track of the collections, so we can refer to them by name
 COLLECTIONS = {};
@@ -70,7 +71,7 @@ var upsert = function (coll, useUpdate, query, mod, options, callback) {
     if (useUpdate) {
         if (callback)
             return coll.update(query, mod,
-                _.extend({upsert: true}, options),
+                Object.assign({upsert: true}, options),
                 function (err, result) {
                     callback(err, !err && {
                         numberAffected: result
@@ -78,7 +79,7 @@ var upsert = function (coll, useUpdate, query, mod, options, callback) {
                 });
         return {
             numberAffected: coll.update(query, mod,
-                _.extend({upsert: true}, options))
+                Object.assign({upsert: true}, options))
         };
     }
     return coll.upsert(query, mod, options, callback);
@@ -166,7 +167,7 @@ var Dog = function (name, color, actions) {
     self.name = name;
     self.actions = actions || [{name: 'wag'}, {name: 'swim'}];
 };
-_.extend(Dog.prototype, {
+Object.assign(Dog.prototype, {
     getName: function () {
         return this.name;
     },
@@ -197,7 +198,7 @@ EJSON.addType('dog', function (o) {
 
 
 // Parameterize tests.
-_.each(['STRING', 'MONGO'], function (idGeneration) {
+['STRING', 'MONGO'].forEach(idGeneration => {
 
     var collectionOptions = {idGeneration: idGeneration};
 
@@ -209,7 +210,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 test.instanceOf(err, Error);
             };
 
-            _.each(['insert', 'remove', 'update'], function (op) {
+            ['insert', 'remove', 'update'].forEach(op => {
                 var arg = (op === 'insert' ? {} : 'bla');
                 var arg2 = {};
 
@@ -245,7 +246,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         var run = test.runId();
         var coll, coll2;
         if (Meteor.isClient) {
-            let unmanaged = _.extend({connection: null}, collectionOptions);
+            let unmanaged = Object.assign({connection: null}, collectionOptions);
             coll = new UniCollection('basics_coll_' + run, unmanaged); // local, unmanaged
             coll2 = new UniCollection('basics_coll2' + run, unmanaged); // local, unmanaged
         } else {
@@ -348,7 +349,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
             return doc.x * 2;
         }, context), [2, 8]);
 
-        test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+        test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
             [4, 1]);
 
         expectObserve('', function () {
@@ -359,14 +360,14 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         expectObserve('c(3,0,1)c(6,1,4)', function () {
             var count = coll.update({run: run}, {$inc: {x: 2}}, {multi: true});
             test.equal(count, 2);
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+            test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
                 [6, 3]);
         });
 
         expectObserve(['c(13,0,3)m(13,0,1)', 'm(6,1,0)c(13,1,3)',
             'c(13,0,3)m(6,1,0)', 'm(3,0,1)c(13,1,3)'], function () {
             coll.update({run: run, x: 3}, {$inc: {x: 10}}, {multi: true});
-            test.equal(_.pluck(coll.find({run: run}, {sort: {x: -1}}).fetch(), 'x'),
+            test.equal(coll.find({run: run}, {sort: {x: -1}}).map(item => item.x),
                 [13, 6]);
         });
 
@@ -396,7 +397,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('fuzz' + run, _.extend({connection: null}, collectionOptions)); // local
+            coll = new UniCollection('fuzz' + run, Object.assign({connection: null}, collectionOptions)); // local
         } else {
             coll = new UniCollection('livedata_test_collection_' + run, collectionOptions);
         }
@@ -462,7 +463,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                 return;
             }
 
-            var max_counters = _.clone(counters);
+            var max_counters = Object.assign({}, counters);
 
             finishObserve(function () {
                 var x, val;
@@ -514,7 +515,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 
             // Did we limit ourselves to one 'moved' message per change,
             // rather than O(results) moved messages?
-            _.each(max_counters, function (v, k) {
+            Object.keys(max_counters).forEach(k => {
                 test.isTrue(max_counters[k] >= counters[k], k);
             });
 
@@ -529,7 +530,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
         var run = Random.id();
         var coll;
         if (Meteor.isClient) {
-            coll = new UniCollection('unmanaged' + run, _.extend({connection: null}, collectionOptions)); // local, unmanaged
+            coll = new UniCollection('unmanaged' + run, Object.assign({connection: null}, collectionOptions)); // local, unmanaged
         } else {
             coll = new UniCollection('stopHandleInCallback-' + run, collectionOptions);
         }
@@ -1024,7 +1025,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
                     bothIds: 1
                 });
 
-            _.each(handlesToStop, function (h) {
+            handlesToStop.forEach(h => {
                 h.stop();
             });
             onComplete();
@@ -1112,7 +1113,7 @@ _.each(['STRING', 'MONGO'], function (idGeneration) {
 // Runs a method and its stub which do some upserts. The method throws an error
 // if we don't get the right return values.
     if (Meteor.isClient) {
-        _.each([true, false], function (useUpdate) {
+        [true, false].forEach(useUpdate => {
             Tinytest.addAsync('UniCollection - ' + (useUpdate ? 'update ' : '') + 'upsert in method, ' + idGeneration, function (test, onComplete) {
                 var run = test.runId();
                 upsertTestMethodColl = new UniCollection(upsertTestMethod + '_collection_' + run, collectionOptions);
@@ -1174,7 +1175,7 @@ function collectionInsert (test, expect, coll /*, index*/) {
     var clientSideId = coll.insert({name: 'foo'}, expect(function (err1, id) {
         test.equal(id, clientSideId);
         var o = coll.findOne(id);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1188,7 +1189,7 @@ function functionCallsInsert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1203,7 +1204,7 @@ function functionCalls3Inserts (test, expect, coll, index) {
             test.equal(ids[i], stubId);
 
             var o = coll.findOne(stubId);
-            test.isTrue(_.isObject(o));
+            test.isTrue(isObject(o));
             test.equal(o.name, 'foo');
         }
     }));
@@ -1218,7 +1219,7 @@ function functionChainInsert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
@@ -1232,28 +1233,28 @@ function functionChain2Insert (test, expect, coll, index) {
         test.equal(ids[0], stubId);
 
         var o = coll.findOne(stubId);
-        test.isTrue(_.isObject(o));
+        test.isTrue(isObject(o));
         test.equal(o.name, 'foo');
     }));
 }
 
 
-_.each({
+Object.entries({
     collectionInsert: collectionInsert,
     functionCallsInsert: functionCallsInsert,
     functionCalls3Insert: functionCalls3Inserts,
     functionChainInsert: functionChainInsert,
     functionChain2Insert: functionChain2Insert
-}, function (fn, name) {
-    _.each([1, 3], function (repetitions) {
-        _.each([1, 3], function (collectionCount) {
-            _.each(['STRING', 'MONGO'], function (idGeneration) {
+}).forEach(([name, fn]) => {
+    [1, 3].forEach(repetitions => {
+        [1, 3].forEach(collectionCount => {
+            ['STRING', 'MONGO'].forEach(idGeneration => {
 
                 testAsyncMulti('UniCollection - consistent _id generation ' + name + ', ' + repetitions + ' repetitions on ' + collectionCount + ' collections, idGeneration=' + idGeneration, [function (test, expect) {
                     var collectionOptions = {idGeneration: idGeneration};
 
                     var cleanups = this.cleanups = [];
-                    this.collections = _.times(collectionCount, function () {
+                    this.collections = times(collectionCount, function () {
                         var collectionName = 'consistentid_' + Random.id();
                         if (Meteor.isClient) {
                             Meteor.call('createInsecureCollection', collectionName, collectionOptions);
@@ -1282,7 +1283,7 @@ _.each({
                     }
                 }, function (test, expect) {
                     // Run any registered cleanup functions (e.g. to drop collections)
-                    _.each(this.cleanups, function (cleanup) {
+                    this.cleanups.forEach(cleanup => {
                         cleanup(expect);
                     });
                 }]);
@@ -1573,7 +1574,7 @@ if (Meteor.isServer) {
 
 Meteor.isServer && Tinytest.add('UniCollection - cursor dedup stop', function () {
     var coll = new UniCollection(Random.id());
-    _.times(100, function () {
+    times(100, function () {
         coll.insert({foo: 'baz'});
     });
     var handler = coll.find({}).observeChanges({
@@ -1645,7 +1646,7 @@ Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
             self.id1 = self.coll.insert({sortField: 1, toDelete: true});
             self.id2 = self.coll.insert({sortField: 2, toDelete: true});
         });
-        test.equal(_.keys(state), [self.id2]);
+        test.equal(Object.keys(state), [self.id2]);
 
         // Mutate the one in the unpublished buffer and the one below the
         // buffer. Before the fix for #2274, this left the observe state machine in
@@ -1656,14 +1657,14 @@ Meteor.isServer && testAsyncMulti('UniCollection - observe limit bug', [
                 {$set: {toDelete: false}},
                 {multi: 1});
         });
-        test.equal(_.keys(state), [self.id2]);
+        test.equal(Object.keys(state), [self.id2]);
 
         // Now remove the one published document. This should slide up id1 from the
         // buffer, but this didn't work before the #2274 fix.
         runInFence(function () {
             self.coll.remove({toDelete: true});
         });
-        test.equal(_.keys(state), [self.id1]);
+        test.equal(Object.keys(state), [self.id1]);
 
         expect()();
     }
@@ -1696,14 +1697,14 @@ if (Meteor.isServer) {
     Tinytest.add('UniCollection - update/remove don\'t accept an array as a selector #4804', function (test) {
         var collection = new UniCollection(Random.id());
 
-        _.times(10, function () {
+        times(10, function () {
             collection.insert({data: 'Hello'});
         });
 
         test.equal(collection.find().count(), 10);
 
         // Test several array-related selectors
-        _.each([[], [1, 2, 3], [{}]], function (selector) {
+        [[], [1, 2, 3], [{}]].forEach(selector => {
             test.throws(function () {
                 collection.remove(selector);
             });
