@@ -1,4 +1,4 @@
-<a href="http://vazco.eu"><img src="https://vazco.eu/universe-banner.png" /></a>
+<a href="http://vazco.eu" target="_blank"><img src="https://vazco.eu/universe-banner.png" /></a>
 
 # Universe Collection
 Universe Collections allows you to extend Meteor's [Mongo.Collection](http://docs.meteor.com/#/full/mongo_collection) functionality by allowing you to define your own remote collection methods, add document helpers using a simple helpers method, and create new classes inherited from UniCollection.UniDoc.
