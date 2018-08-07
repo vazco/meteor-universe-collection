@@ -1,6 +1,21 @@
+<h1 align="center">
+    <a href="https://github.com/vazco">vazco</a>/Universe Collection
+</h1>
+
+<p align="center">
+    <img src="https://img.shields.io/david/peer/vazco/eslint-config-vazco.svg" alt="peerDependencies">
+    <img src="https://img.shields.io/david/dev/vazco/eslint-config-vazco.svg" alt="devDependencies">
+    <a href="https://vazco.eu">
+        <img src="https://img.shields.io/badge/vazco-package-blue.svg?logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QA%2FwD%2FAP%2BgvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QMfFAIRHb8WQgAAAY1JREFUKM%2BNkLFrGgEUxr87FMnpnXdIqxi1Q3VxachgSbcOgRBCTMbgH9CCW%2BjSUminSpEmBEIpHW7rkCmQSSjEKVOGEAK5bOFyk4c5TMRTyZ1fl5aK9ai%2F8b334%2Ft4QBBmLQmz9jpoLSKYPQCfYdaezi6atTKAMoAYgK1pJ8LkQPr5JspHsbO%2BFilAEADQArCA3Ftn%2FC40KebPO4Ln37peNNxrFxPSXTaW9cPiewDbgYkkXwBYB3B5dHES3W8cpM254ctOJhr3wsKqs7Zj%2FdOZZITkMf9yT%2FKq3e18eHf47fmTT5XE1H%2BQ3GAwDyQ%2FkkxMSvLvhP%2FxZVLc42zYJBf%2FSPMkW57nsd%2Fv03VdDgYDjkajIPkryVDIdd1Xtm0%2Fdhznptvtmr7vu5IkRRRFySiKko%2FH45BlebzgJoBdodls%2FjAM49SyrIau69etVmsIIFStVnPFYvFZoVBY1jRtJZlMpjRNm5MkCaIofhfq9XrMMIyeruuc9u1KpRIulUqqqqpLqqqW0%2Bl0OZVKyb8ANqUwunhV3dcAAAAASUVORK5CYII%3D&style=flat-square">
+    </a>
+</p>
+
+&nbsp;
+
 <a href="http://vazco.eu" target="_blank"><img src="https://vazco.eu/universe-banner.png" /></a>
 
-# Universe Collection
+&nbsp;
+
 Universe Collections allows you to extend Meteor's [Mongo.Collection](http://docs.meteor.com/#/full/mongo_collection) functionality by allowing you to define your own remote collection methods, add document helpers using a simple helpers method, and create new classes inherited from UniCollection.UniDoc.
 
 Features:
@@ -229,7 +244,7 @@ Additionally you can precise patterns for fields of document, using keysPatterns
 
 ```js
     var book =  Colls.Books.ensureUniDoc(book, Colls.Books.matchingDocument({title: String}));
-    // or 
+    // or
     Match.test(Colls.Books.matchingDocument({title: String}));
     // or
     check(doc, Colls.Books.matchingDocument());
@@ -529,7 +544,7 @@ Inheritance takes place by  calling extend() method on other UniDoc object
 ```
 
 Note that: Methods added by docHelpers methods always are on the top of inheritance.
-You can change object class for document but methods added by docHelpers always are accesible. 
+You can change object class for document but methods added by docHelpers always are accesible.
 
 ### Example use within a blaze template
 
@@ -646,8 +661,8 @@ Gets array of top-level fields, which will be changed by modifier (this from upd
 Gets simulation of new version of document passed as a second argument
 
 ### Direct call without hooks
-Any call of method inside of `collection.withoutHooks(function, list)`, will be called (as a default) without hooks. 
-You can pass a list of hooks that should be omitted. 
+Any call of method inside of `collection.withoutHooks(function, list)`, will be called (as a default) without hooks.
+You can pass a list of hooks that should be omitted.
 Some special words can deactivate group of hooks like BEFORE, AFTER or ALL (what is default)
 
 Example:
@@ -737,7 +752,7 @@ This works like insert or update, to collection.allow and collection.deny will b
            return true;
       }
   });
- 
+
   collection.deny({
        publish: function(userId, doc, publicationName){
            return doc.ownerId !== userId;
@@ -764,7 +779,7 @@ new ShowErrorMixin(params={})
 params:
       name - name of mixin
       errorDisplayer - function that will be responsible as a showing the error message,
-      like e.g. showError(exceptionOrString) // if function is not declared, as a default it will try use UniUI.setErrorMessage, if missing fallback to alert() 
+      like e.g. showError(exceptionOrString) // if function is not declared, as a default it will try use UniUI.setErrorMessage, if missing fallback to alert()
       addForMethods: //Adds only for this one
           insert: true, upsert: true, update: true, remove: true
           (as a value can be passed a custome function of errorDisplayer)
@@ -894,9 +909,9 @@ Meteor.users collection stay unmodiefied. Both operates on the same documents, o
    Checks if document belongs to UniUsers collection
 
    (on client side you must have this doc in minimongo [subscription needed])
-   
+
 - `UniUsers.runWithUser = (userId, func, args, context)` (server only)
-   
+
    Adds a posibility of run function on server side as a user.
    So, UniUsers.getLoggedIn() and UniUsers.getLoggedInId() will be working correctly.
 
@@ -917,7 +932,7 @@ But if you want something more, this package provides additional mechanism for i
 UniCollection.published works just like Meteor.publish but has a few additional stuff.
 - Simple mappings of relations or possibility of access control (by mixin)
 - Another benefit is that UniCollection.publish can be dynamically changed (redeclared)
-- Possibility of setting by options accessibility like: publication is only for users or only for admins. 
+- Possibility of setting by options accessibility like: publication is only for users or only for admins.
 No more checking `if(!this.userId){ this.ready(); return;}`
 
 ## Simple way
@@ -1043,9 +1058,11 @@ check it out following package:
 
 [universe:fixes-for-third-party-packages](https://atmospherejs.com/universe/fixes-for-third-party-packages)
 
-Copyright and license
-Code and documentation © 2015 Vazco.eu
-Released under the MIT license.
-
 This package is part of Universe, a package ecosystem based on Meteor platform maintained by Vazco.
 It works as standalone Meteor package, but you can get much more features when using the whole system.
+
+## License
+
+<img src="https://vazco.eu/banner.png" align="right">
+
+**Like every package maintained by [Vazco](https://vazco.eu/), Universe Collection is [MIT licensed](https://github.com/vazco/uniforms/blob/master/LICENSE).**
